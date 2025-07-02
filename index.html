@@ -931,33 +931,14 @@
     <div class="modal" id="contactModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Get In Touch</h2>
+                <h2 class="modal-title">Contact Disabled</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <form
-                    id="contactForm"
-                    action="https://formspree.io/f/mblybljn"
-                    method="POST"
-                    >
-                    <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <input type="text" id="subject" name="subject" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" placeholder="Tell me about your project or enquiry..." required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn">Send Message</button>
-                </form>
+            <div class="modal-body" style="text-align:center;">
+                <p>
+                    The contact form is temporarily disabled in accordance with Upwork Terms of Service.<br>
+                    Please reach out via Upwork for all communications.
+                </p>
             </div>
         </div>
     </div>
@@ -1566,66 +1547,6 @@
         }
         enableCard3DEffect();
         window.addEventListener('resize', enableCard3DEffect);
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('contactForm');
-        const modalBody = form.closest('.modal-body');
-
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            // Basic validation
-            const name = form.name.value.trim();
-            const email = form.email.value.trim();
-            const subject = form.subject.value.trim();
-            const message = form.message.value.trim();
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (name.length < 2) {
-                alert('Please enter your name.');
-                form.name.focus();
-                return;
-            }
-            if (!emailPattern.test(email)) {
-                alert('Please enter a valid email address.');
-                form.email.focus();
-                return;
-            }
-            if (subject.length < 2) {
-                alert('Please enter a subject.');
-                form.subject.focus();
-                return;
-            }
-            if (message.length < 10) {
-                alert('Please enter a message (at least 10 characters).');
-                form.message.focus();
-                return;
-            }
-
-            // Submit via AJAX to Formspree
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json' },
-                    body: new FormData(form)
-                });
-                if (response.ok) {
-                    form.reset();
-                    modalBody.innerHTML = `
-                        <div style="text-align:center; padding:2rem 0;">
-                            <h3 style="color:var(--accent-green);">Thank you!</h3>
-                            <p>Your message has been sent successfully.<br>I'll get back to you soon.</p>
-                        </div>
-                    `;
-                } else {
-                    alert('Sorry, there was a problem sending your message. Please try again later.');
-                }
-            } catch (err) {
-                alert('Sorry, there was a problem sending your message. Please try again later.');
-            }
-        });
-    });
     </script>
 </body>
 </html>
