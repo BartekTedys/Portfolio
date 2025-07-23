@@ -25,6 +25,12 @@
             --glow-green: rgba(34, 197, 94, 0.25);
             --error-color: #ef4444;
             --warning-color: #f59e0b;
+            
+            /* Animation variables */
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-spring: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         body {
@@ -53,6 +59,7 @@
                         radial-gradient(circle at 80% 70%, rgba(21, 128, 61, 0.04) 0%, transparent 50%),
                         radial-gradient(circle at 40% 80%, rgba(22, 163, 74, 0.03) 0%, transparent 50%);
             animation: backgroundPulse 20s ease-in-out infinite;
+            transition: transform var(--transition-slow);
         }
 
         @keyframes backgroundPulse {
@@ -70,6 +77,7 @@
             border-bottom: 1px solid var(--card-border);
             z-index: 100;
             padding: 1rem 0;
+            transition: all var(--transition-normal);
         }
 
         nav {
@@ -94,27 +102,49 @@
             border-radius: 25px;
             padding: 0.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             display: flex;
             align-items: center;
             justify-content: center;
             width: 50px;
             height: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--gradient-green);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .theme-toggle:hover::before {
+            width: 100px;
+            height: 100px;
         }
 
         .theme-toggle:hover {
-            background: var(--accent-green);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 20px var(--glow-green);
         }
 
         .theme-toggle:hover .theme-icon {
             color: var(--primary-bg);
+            transform: rotate(180deg);
         }
 
         .theme-icon {
             font-size: 1.2rem;
             color: var(--accent-green);
-            transition: color 0.3s ease;
+            transition: all var(--transition-spring);
         }
 
         /* Fake light mode overlay */
@@ -131,12 +161,40 @@
             justify-content: center;
             flex-direction: column;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transform: scale(0.8) rotate(5deg);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
         .fake-light-mode.active {
-            display: flex;
             opacity: 1;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .fake-light-mode.exiting {
+            opacity: 0;
+            transform: scale(0.8) rotate(5deg);
+        }
+
+        @keyframes lightModeEntry {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotate(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes lightModeExit {
+            0% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8) rotate(5deg);
+            }
         }
 
         .light-mode-message {
@@ -144,6 +202,18 @@
             color: #333333;
             max-width: 600px;
             padding: 2rem;
+            animation: messageSlideUp 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes messageSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .light-mode-title {
@@ -167,14 +237,34 @@
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             font-size: 1rem;
             margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .switch-back-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: #333333;
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .switch-back-btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .switch-back-btn:hover {
-            background: #333333;
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
@@ -185,6 +275,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all var(--transition-normal);
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
 
         .contact-btn {
@@ -195,24 +290,66 @@
             color: var(--primary-bg);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             text-decoration: none;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-dark-green);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .contact-btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .contact-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 10px 20px var(--glow-green);
         }
 
-        /* Page content */
+        .contact-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        /* Page content with enhanced transitions */
         .page {
             display: none;
             min-height: 100vh;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all var(--transition-slow);
         }
 
         .page.active {
             display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .page.exiting {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        /* Smooth page transitions without loading overlay */
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Main content */
@@ -274,14 +411,14 @@
             padding: 0 2rem;
         }
 
-        /* Card styles */
+        /* Enhanced card styles */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
             padding: 2rem;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all var(--transition-spring);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
@@ -291,10 +428,45 @@
             min-height: 200px;
         }
 
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left var(--transition-slow);
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 20px 40px var(--glow-green),
                         0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .card:active {
+            transform: translateY(-3px) scale(1.01);
+            transition: all var(--transition-fast);
+        }
+
+        .card-click-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.3);
+            transform: scale(0);
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
 
         .card-image {
@@ -307,6 +479,11 @@
             justify-content: center;
             font-size: 3rem;
             overflow: hidden;
+            transition: all var(--transition-spring);
+        }
+
+        .card:hover .card-image {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .card-image img {
@@ -314,11 +491,11 @@
             height: 100%;
             object-fit: cover;
             border-radius: 15px;
+            transition: all var(--transition-spring);
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        .card:hover .card-image img {
+            transform: scale(1.1);
         }
 
         .card-content {
@@ -331,6 +508,11 @@
             font-size: 1.8rem;
             margin-bottom: 1rem;
             color: var(--text-primary);
+            transition: color var(--transition-normal);
+        }
+
+        .card:hover h3 {
+            color: var(--accent-green);
         }
 
         .card p {
@@ -348,12 +530,12 @@
         }
 
         .arrow {
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-spring);
             margin-left: 0.5rem;
         }
 
         .card:hover .arrow {
-            transform: translateX(5px);
+            transform: translateX(10px) scale(1.2);
         }
 
         /* Reverse layout for alternating cards */
@@ -377,19 +559,52 @@
             border-radius: 20px;
             padding: 2rem;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all var(--transition-spring);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
             min-height: 300px;
             display: flex;
             flex-direction: column;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .project-card.animate-in {
+            animation: projectCardSlideIn 0.6s ease-out forwards;
+        }
+
+        @keyframes projectCardSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left var(--transition-slow);
+        }
+
+        .project-card:hover::before {
+            left: 100%;
         }
 
         .project-card:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 20px 40px var(--glow-green),
                         0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .project-card:active {
+            transform: translateY(-8px) scale(1.01);
+            transition: all var(--transition-fast);
         }
 
         .project-image {
@@ -403,6 +618,11 @@
             justify-content: center;
             font-size: 2rem;
             overflow: hidden;
+            transition: all var(--transition-spring);
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.05);
         }
 
         .project-image img {
@@ -410,12 +630,22 @@
             height: 100%;
             object-fit: cover;
             border-radius: 10px;
+            transition: all var(--transition-spring);
+        }
+
+        .project-card:hover .project-image img {
+            transform: scale(1.1);
         }
 
         .project-card h3 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
             color: var(--text-primary);
+            transition: color var(--transition-normal);
+        }
+
+        .project-card:hover h3 {
+            color: var(--accent-green);
         }
 
         .project-card p {
@@ -437,118 +667,104 @@
             font-size: 0.8rem;
             font-weight: 500;
             border: 1px solid;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
+            transform: translateY(0);
         }
 
-        /* Default green for unlisted technologies */
+        .tech-tag:hover {
+            transform: translateY(-2px) scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Tech tag colors */
         .tech-tag:not([class*="tech-"]) {
             background: rgba(34, 197, 94, 0.1);
             border-color: var(--accent-green);
             color: var(--accent-green);
         }
 
-        /* HTML5 - Orange */
         .tech-html5 {
             background: rgba(241, 101, 41, 0.1);
             border-color: #f16529;
             color: #f16529;
         }
 
-        /* CSS3 - Blue */
         .tech-css3 {
             background: rgba(21, 114, 182, 0.1);
             border-color: #1572b6;
             color: #1572b6;
         }
 
-        /* JavaScript - Yellow */
         .tech-javascript {
             background: rgba(247, 223, 30, 0.1);
             border-color: #f7df1e;
             color: #e6c721;
         }
 
-        /* Python - Blue */
         .tech-python {
             background: rgba(55, 118, 171, 0.1);
             border-color: #3776ab;
             color: #3776ab;
         }
 
-        /* PyTorch - Orange/Red */
         .tech-pytorch {
             background: rgba(238, 76, 44, 0.1);
             border-color: #ee4c2c;
             color: #ee4c2c;
         }
 
-        /* TensorFlow - Orange */
         .tech-tensorflow {
             background: rgba(255, 109, 7, 0.1);
             border-color: #ff6d07;
             color: #ff6d07;
         }
 
-        /* React Native - Cyan */
         .tech-react {
             background: rgba(97, 218, 251, 0.1);
             border-color: #61dafb;
             color: #61dafb;
         }
 
-        /* TypeScript - Blue */
         .tech-typescript {
             background: rgba(49, 120, 198, 0.1);
             border-color: #3178c6;
             color: #3178c6;
         }
 
-        /* D3.js - Orange */
         .tech-d3 {
             background: rgba(240, 135, 51, 0.1);
             border-color: #f08733;
             color: #f08733;
         }
 
-        /* Computer Vision - Purple */
         .tech-cv {
             background: rgba(138, 43, 226, 0.1);
             border-color: #8a2be2;
             color: #8a2be2;
         }
 
-        /* Mobile Development - Green */
         .tech-mobile {
             background: rgba(76, 175, 80, 0.1);
             border-color: #4caf50;
             color: #4caf50;
         }
 
-        /* Responsive Design - Purple */
         .tech-responsive {
             background: rgba(156, 39, 176, 0.1);
             border-color: #9c27b0;
             color: #9c27b0;
         }
 
-        /* QGIS - Green */
         .tech-qgis {
             background: rgba(96, 165, 67, 0.1);
             border-color: #60a543;
             color: #60a543;
         }
 
-        /* Collaboration - Gray */
         .tech-collaboration {
             background: rgba(158, 158, 158, 0.1);
             border-color: #9e9e9e;
             color: #9e9e9e;
-        }
-
-        /* Hover effects */
-        .tech-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .back-btn {
@@ -559,18 +775,43 @@
             color: var(--primary-bg);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             margin-bottom: 2rem;
             display: inline-block;
             text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-dark-green);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .back-btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .back-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 10px 20px var(--glow-green);
         }
 
-        /* Modal styles */
+        .back-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        /* Enhanced Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -582,7 +823,7 @@
             backdrop-filter: blur(10px);
             z-index: 1000;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: all var(--transition-slow);
         }
 
         .modal.active {
@@ -602,12 +843,20 @@
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
-        .modal.active .modal-content {
-            transform: scale(1);
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal.closing .modal-content {
+            transform: translateY(-50px);
+            opacity: 0;
         }
 
         .modal-header {
@@ -633,11 +882,19 @@
             color: var(--text-secondary);
             font-size: 2rem;
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: all var(--transition-spring);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .close-btn:hover {
             color: var(--text-primary);
+            background: var(--card-bg);
+            transform: rotate(90deg) scale(1.1);
         }
 
         .modal-body {
@@ -664,12 +921,13 @@
         /* Enhanced Contact Form Styles */
         .form-container {
             position: relative;
-            transition: all 0.5s ease;
+            transition: all var(--transition-slow);
         }
 
         .form-group {
             margin-bottom: 1.5rem;
             position: relative;
+            width: 100%;
         }
 
         .form-group label {
@@ -677,39 +935,56 @@
             margin-bottom: 0.5rem;
             color: var(--accent-green);
             font-weight: 600;
-            transition: color 0.3s ease;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--card-border);
+            padding: 1rem;
+            border: 2px solid var(--card-border);
             border-radius: 10px;
             background: var(--primary-bg);
             color: var(--text-primary);
             font-family: inherit;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             font-size: 1rem;
+            min-height: 48px;
+            cursor: text;
+            position: relative;
+            z-index: 2;
+            box-sizing: border-box;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: var(--accent-green);
-            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+            transform: translateY(-2px) scale(1.01);
+            z-index: 3;
         }
 
         .form-group textarea {
             resize: vertical;
             min-height: 120px;
+            padding: 1rem;
         }
 
         .form-group.error input,
         .form-group.error textarea {
             border-color: var(--error-color);
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+            animation: inputShake 0.5s ease-in-out;
+        }
+
+        @keyframes inputShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .form-group.error label {
@@ -722,7 +997,7 @@
             margin-top: 0.5rem;
             opacity: 0;
             transform: translateY(-10px);
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .error-message.show {
@@ -738,7 +1013,7 @@
             color: var(--primary-bg);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             width: 100%;
             font-size: 1rem;
             position: relative;
@@ -749,9 +1024,32 @@
             justify-content: center;
         }
 
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-dark-green);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .submit-btn:hover:not(:disabled)::before {
+            width: 200px;
+            height: 200px;
+        }
+
         .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: 0 10px 20px var(--glow-green);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(-1px) scale(1.01);
         }
 
         .submit-btn:disabled {
@@ -760,7 +1058,7 @@
         }
 
         .btn-text {
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-normal);
         }
 
         .btn-loader {
@@ -772,7 +1070,7 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-normal);
         }
 
         .submit-btn.loading .btn-text {
@@ -783,30 +1081,25 @@
             opacity: 1;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         /* Success state */
         .success-container, .error-container {
             text-align: center;
             opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.5s ease;
+            transform: scale(0.8) translateY(20px);
+            transition: all var(--transition-spring);
             position: absolute;
-            top: 40%;
+            top: 50%;
             left: 50%;
-            transform: translate(-50%, -40%) scale(0.8);
+            transform: translate(-50%, -50%) scale(0.8);
             width: 80%;
+            padding-top: 2rem;
         }
 
         .success-container.show, .error-container.show {
             opacity: 1;
-            transform: translate(-50%, -40%) scale(1);
+            transform: translate(-50%, -50%) scale(1);
         }
 
-        /* Make modal non-scrollable when showing success/error */
         .modal-content.form-submitted {
             overflow: hidden;
             max-height: 80vh;
@@ -883,12 +1176,33 @@
             color: var(--primary-bg);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             margin-right: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .retry-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-dark-green);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .retry-btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .retry-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 10px 20px var(--glow-green);
         }
 
@@ -900,15 +1214,35 @@
             color: var(--text-primary);
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             text-decoration: none;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-back-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-green);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+        .form-back-btn:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .form-back-btn:hover {
-            background: var(--accent-green);
             color: var(--primary-bg);
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
         }
 
         .form-container.hidden {
@@ -952,6 +1286,7 @@
             background: rgba(34, 197, 94, 0.4);
             border-radius: 10px;
             border: none;
+            transition: background var(--transition-normal);
         }
 
         ::-webkit-scrollbar-thumb:hover {
@@ -994,7 +1329,7 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-spring);
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -1003,7 +1338,7 @@
         }
 
         .gallery-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.05);
             box-shadow: 0 10px 20px var(--glow-green);
             border-color: var(--accent-green);
         }
@@ -1013,6 +1348,11 @@
             height: 100%;
             object-fit: cover;
             border-radius: 10px;
+            transition: all var(--transition-spring);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
         }
 
         .gallery-placeholder {
@@ -1033,7 +1373,7 @@
             background: rgba(0, 0, 0, 0.9);
             z-index: 2000;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-normal);
         }
 
         .lightbox.active {
@@ -1047,6 +1387,12 @@
             max-width: 90%;
             max-height: 90%;
             position: relative;
+            transform: scale(0.9);
+            transition: transform var(--transition-spring);
+        }
+
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
         }
 
         .lightbox-image {
@@ -1065,11 +1411,19 @@
             color: white;
             font-size: 2rem;
             cursor: pointer;
-            transition: color 0.3s ease;
+            transition: all var(--transition-spring);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .lightbox-close:hover {
             color: var(--accent-green);
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg) scale(1.2);
         }
 
         .lightbox-caption {
@@ -1082,7 +1436,7 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive gallery */
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .gallery-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1125,6 +1479,30 @@
             .error-container {
                 width: 90%;
             }
+        }
+
+        /* Add stagger animation delay for project cards */
+        .project-card:nth-child(1) { animation-delay: 0.1s; }
+        .project-card:nth-child(2) { animation-delay: 0.2s; }
+        .project-card:nth-child(3) { animation-delay: 0.3s; }
+        .project-card:nth-child(4) { animation-delay: 0.4s; }
+        .project-card:nth-child(5) { animation-delay: 0.5s; }
+        .project-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Loading pulse for images */
+        .loading-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Keyboard navigation styles */
+        .keyboard-nav *:focus {
+            outline: 2px solid var(--accent-green) !important;
+            outline-offset: 2px !important;
         }
     </style>
 </head>
@@ -1197,13 +1575,13 @@
                     </div>
                 </div>
 
-                <div class="card" onclick="showProjectsPage()">
+                <div class="card" onclick="showProjectsPageAnimated()">
                     <div class="card-image">
                         <img src="images/profile/experience.jfif" alt="Projects & Experience" />
                     </div>
                     <div class="card-content">
                         <h3>Projects & Experience</h3>
-                        <p>From building websites that tripled client leads to training AI models that count trees from space. I've analyzed satellite imagery, built data pipelines, created predictive models, and somehow survived multiple group projects along the way.</p>
+                        <p>From building websites that tripled client leads to training AI models that count trees from space. I've analysed satellite imagery, built data pipelines, created predictive models, and somehow survived multiple group projects along the way.</p>
                         <div class="card-footer">
                             <span>See the work</span>
                             <span class="arrow">→</span>
@@ -1217,7 +1595,7 @@
     <!-- Projects Page -->
     <div class="page" id="projectsPage">
         <main>
-            <button class="back-btn" onclick="showHomePage()">← Back to Home</button>
+            <button class="back-btn" onclick="showHomePageAnimated()">← Back to Home</button>
             
             <section class="hero">
                 <h1>Projects & Experience</h1>
@@ -1325,7 +1703,7 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Hey there! I'm Bartek (because "Bartlomiej" breaks most keyboards). I'm a 21-year-old developer from Poland who somehow ended up in Ireland building websites, analyzing data, and teaching AI to recognize patterns in everything from customer behavior to satellite imagery.</p>
+                <p>Hey there! I'm Bartek (because "Bartlomiej" breaks most keyboards). I'm a 21-year-old developer from Poland who somehow ended up in Ireland building websites, analysing data, and teaching AI to recognise patterns in everything from customer behavior to satellite imagery.</p>
                 
                 <h4>The Origin Story</h4>
                 <p>Started coding when I was 12 because I wanted to make video games. Turns out game development is hard, but web development and data analysis? Those clicked immediately. Now I'm the person businesses call when they need both a website that converts AND insights from their data that actually help them make better decisions.</p>
@@ -1335,9 +1713,9 @@
                     <li>Build websites and web apps that convert visitors into customers (recent client saw 300% more leads)</li>
                     <li>Create data dashboards that turn spreadsheet chaos into clear business insights</li>
                     <li>Develop AI/ML models for everything from computer vision to predictive analytics</li>
-                    <li>Design data pipelines that automatically collect, clean, and analyze your business data</li>
+                    <li>Design data pipelines that automatically collect, clean, and analyse your business data</li>
                     <li>Build React and Next.js applications with integrated analytics and reporting features</li>
-                    <li>Transform raw data into visualizations that even your least data-savvy team members can understand</li>
+                    <li>Transform raw data into visualisations that even your least data-savvy team members can understand</li>
                     <li>Write Python scripts that automate boring data tasks so you can focus on strategy</li>
                     <li>Translate between "what the data says" and "what this means for your business"</li>
                 </ul>
@@ -1369,7 +1747,7 @@
                 <h4>Hogeschool van Amsterdam, Netherlands</h4>
                 <p><strong>2023 - 2024 (Erasmus Exchange)</strong></p>
                 <p><strong>Big Data & Mobile App Development</strong></p>
-                <p>Spent a year in Amsterdam learning about big data while trying not to get run over by cyclists. Built a mobile app for a local startup and discovered that working with international teams means debugging code in three different time zones.</p>
+                <p>Spent a year in Amsterdam learning about big data while trying not to get run over by cyclists. Built a mobile app for a local startup and discovered that working with international teams means debugging code in three different time sones.</p>
 
                 <h4>What I Actually Learned</h4>
                 <ul>
@@ -1379,7 +1757,7 @@
                     <li>Mobile development that works on both iPhone and Android (it's harder than it looks)</li>
                     <li>How to work in teams without losing your sanity</li>
                     <li>Why documentation matters (learned this the hard way)</li>
-                    <li>Docker and Kubernetes (because apparently everything needs to be containerized now)</li>
+                    <li>Docker and Kubernetes (because apparently everything needs to be containerised now)</li>
                     <li>How to explain technical concepts to non-technical people (invaluable skill)</li>
                 </ul>
 
@@ -1389,11 +1767,11 @@
         </div>
     </div>
 
-    <!-- Updated Contact Modal -->
+    <!-- Contact Modal -->
     <div class="modal" id="contactModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Let's Build & Analyze</h2>
+                <h2 class="modal-title">Let's Build & Analyse</h2>
                 <button class="close-btn">&times;</button>
             </div>
 
@@ -1472,7 +1850,7 @@
                     <li>Mobile-first design (because most people browse on their phones)</li>
                     <li>Lightning-fast loading times (nobody waits for slow websites)</li>
                     <li>Clear call-to-actions that actually guide visitors to make contact</li>
-                    <li>SEO optimization so people can actually find them on Google</li>
+                    <li>SEO optimisation so people can actually find them on Google</li>
                     <li>Analytics tracking to measure what's working</li>
                 </ul>
 
@@ -1527,7 +1905,7 @@
                 <ul>
                     <li>Built and trained deep learning models using PyTorch and TensorFlow</li>
                     <li>Processed thousands of satellite images to teach AI what trees look like from space</li>
-                    <li>Optimized models to run fast enough for real-world use (turns out speed matters when you're monitoring entire forests)</li>
+                    <li>Optimised models to run fast enough for real-world use (turns out speed matters when you're monitoring entire forests)</li>
                     <li>Created automated pipelines that can process new satellite data without human intervention</li>
                     <li>Wrote documentation that other researchers can actually understand and use</li>
                 </ul>
@@ -1536,7 +1914,7 @@
                 <p>We used state-of-the-art object detection architectures, fine-tuned them on custom datasets, and got them running efficiently enough to process real satellite feeds. The tricky part wasn't just detecting trees - it was distinguishing individual tree canopies from each other in dense forests.</p>
 
                 <h4>Why This Matters</h4>
-                <p>Traditional forest monitoring takes months and requires teams of people manually analyzing images. Our AI can do the same analysis in hours and catch deforestation as it happens, not months later. It's environmental protection with a tech upgrade.</p>
+                <p>Traditional forest monitoring takes months and requires teams of people manually analysing images. Our AI can do the same analysis in hours and catch deforestation as it happens, not months later. It's environmental protection with a tech upgrade.</p>
 
                 <h4>What I Learned</h4>
                 <p>Working on research taught me that building AI for real-world problems is completely different from following online tutorials. You spend most of your time on data quality, edge cases, and making sure your model actually works when it matters.</p>
@@ -1627,12 +2005,12 @@
     <div class="modal" id="project5Modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Data Visualization Project</h2>
+                <h2 class="modal-title">Data Visualisation Project</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <h4>Making Data Less Boring</h4>
-                <p>Academic project that turned me into a data visualization convert. The assignment was simple: take complex environmental data and make it understandable. The execution was anything but simple.</p>
+                <p>Academic project that turned me into a data visualisation convert. The assignment was simple: take complex environmental data and make it understandable. The execution was anything but simple.</p>
 
                 <h4>The Challenge</h4>
                 <ul>
@@ -1643,10 +2021,10 @@
                 </ul>
 
                 <h4>My Solution</h4>
-                <p>Built an interactive web platform using D3.js for custom visualizations and vanilla JavaScript for the logic. Created filtering systems that let users explore the data instead of just staring at static charts. Added real-time updates so the information stayed current.</p>
+                <p>Built an interactive web platform using D3.js for custom visualisations and vanilla JavaScript for the logic. Created filtering systems that let users explore the data instead of just staring at static charts. Added real-time updates so the information stayed current.</p>
 
                 <h4>The D3.js Learning Curve</h4>
-                <p>D3.js is powerful but has the steepest learning curve I've ever encountered. I probably spent more time reading documentation than writing code. But once it clicked, I could create exactly the visualizations I wanted instead of settling for whatever the charting library offered.</p>
+                <p>D3.js is powerful but has the steepest learning curve I've ever encountered. I probably spent more time reading documentation than writing code. But once it clicked, I could create exactly the visualisations I wanted instead of settling for whatever the charting library offered.</p>
 
                 <h4>What I Learned</h4>
                 <p>Data visualization isn't just about making things pretty - it's about telling stories with data. The best charts aren't the most complex ones; they're the ones that help users understand something they couldn't see before.</p>
@@ -1687,7 +2065,7 @@
             <div class="modal-body">
                 <h4>AI Tree Detection Showdown</h4>
                 <p>
-                    My final thesis project: comparing three different AI models to see which one is best at detecting individual trees in aerial photographs. Think of it as a heavyweight championship, but for computer vision algorithms that specialize in forest analysis.
+                    My final thesis project: comparing three different AI models to see which one is best at detecting individual trees in aerial photographs. Think of it as a heavyweight championship, but for computer vision algorithms that specialise in forest analysis.
                 </p>
 
                 <h4>The Research Question</h4>
@@ -1707,7 +2085,7 @@
 
                 <h4>What I Discovered</h4>
                 <ul>
-                    <li>The "best" model depends entirely on what you're optimizing for - speed vs accuracy vs computational resources</li>
+                    <li>The "best" model depends entirely on what you're optimising for - speed vs accuracy vs computational resources</li>
                     <li>Data quality matters more than model complexity (garbage in, garbage out, even with fancy AI)</li>
                     <li>Academic papers often skip the messy parts of making AI work in production environments</li>
                 </ul>
@@ -1754,20 +2132,83 @@
     </div>
 
     <script>
-        // Page navigation
-        function showProjectsPage() {
-            document.getElementById('homePage').classList.remove('active');
-            document.getElementById('projectsPage').classList.add('active');
-            window.scrollTo(0, 0);
+        // Enhanced page navigation with smooth transitions (no loading overlay)
+        async function showProjectsPageAnimated() {
+            // Hide current page with exit animation
+            const homePage = document.getElementById('homePage');
+            homePage.classList.add('exiting');
+            
+            // Wait for exit animation
+            setTimeout(() => {
+                homePage.classList.remove('active', 'exiting');
+                
+                // Show projects page
+                const projectsPage = document.getElementById('projectsPage');
+                projectsPage.classList.add('active');
+                
+                // Animate project cards in with stagger
+                setTimeout(() => {
+                    animateProjectCardsIn();
+                }, 100);
+                
+                window.scrollTo(0, 0);
+            }, 300);
         }
 
-        function showHomePage() {
-            document.getElementById('projectsPage').classList.remove('active');
-            document.getElementById('homePage').classList.add('active');
-            window.scrollTo(0, 0);
+        async function showHomePageAnimated() {
+            // Hide current page with exit animation
+            const projectsPage = document.getElementById('projectsPage');
+            projectsPage.classList.add('exiting');
+            
+            // Wait for exit animation
+            setTimeout(() => {
+                projectsPage.classList.remove('active', 'exiting');
+                
+                // Show home page
+                const homePage = document.getElementById('homePage');
+                homePage.classList.add('active');
+                
+                window.scrollTo(0, 0);
+            }, 300);
         }
 
-        // Modal functionality
+        // Animate project cards in with staggered delay
+        function animateProjectCardsIn() {
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach((card, index) => {
+                // Reset animation state
+                card.classList.remove('animate-in');
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                // Trigger animation with delay
+                setTimeout(() => {
+                    card.classList.add('animate-in');
+                }, index * 100);
+            });
+        }
+
+        // Add ripple effect to cards on click
+        function createRippleEffect(e, element) {
+            const ripple = document.createElement('span');
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('card-click-ripple');
+            
+            element.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // Modal functionality with enhanced animations
         const cards = document.querySelectorAll('.card[data-modal]');
         const projectCards = document.querySelectorAll('.project-card');
         const modals = document.querySelectorAll('.modal');
@@ -1775,38 +2216,54 @@
 
         // Open modal when home page card is clicked
         cards.forEach(card => {
-            card.addEventListener('click', () => {
-                const modalId = card.getAttribute('data-modal') + 'Modal';
-                const modal = document.getElementById(modalId);
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
+            card.addEventListener('click', (e) => {
+                createRippleEffect(e, card);
+                
+                setTimeout(() => {
+                    const modalId = card.getAttribute('data-modal') + 'Modal';
+                    const modal = document.getElementById(modalId);
+                    openModalAnimated(modal);
+                }, 200);
             });
         });
 
         // Open project modal when project card is clicked
         projectCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const projectId = card.getAttribute('data-project');
-                const modalId = projectId + 'Modal';
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
-                }
+            card.addEventListener('click', (e) => {
+                createRippleEffect(e, card);
+                
+                setTimeout(() => {
+                    const projectId = card.getAttribute('data-project');
+                    const modalId = projectId + 'Modal';
+                    const modal = document.getElementById(modalId);
+                    if (modal) {
+                        openModalAnimated(modal);
+                    }
+                }, 200);
             });
         });
 
-        // Close modal when close button is clicked
-        closeBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const modal = btn.closest('.modal');
-                modal.classList.remove('active');
+        function openModalAnimated(modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Trigger the slide-in animation
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+        }
+
+        function closeModalAnimated(modal) {
+            // Remove show class to trigger exit animation
+            modal.classList.remove('show');
+            modal.classList.add('closing');
+            
+            setTimeout(() => {
+                modal.classList.remove('active', 'closing');
                 document.body.style.overflow = 'auto';
                 
                 // Reset contact form when closing contact modal
                 if (modal.id === 'contactModal') {
-                    // Unlock scrolling and make modal scrollable again
                     document.body.classList.remove('scroll-locked');
                     const modalContent = modal.querySelector('.modal-content');
                     modalContent.classList.remove('form-submitted');
@@ -1817,6 +2274,15 @@
                         }
                     }, 300);
                 }
+            }, 400);
+        }
+
+        // Close modal when close button is clicked
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const modal = btn.closest('.modal');
+                closeModalAnimated(modal);
             });
         });
 
@@ -1824,22 +2290,7 @@
         modals.forEach(modal => {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                    
-                    // Reset contact form when closing contact modal
-                    if (modal.id === 'contactModal') {
-                        // Unlock scrolling and make modal scrollable again
-                        document.body.classList.remove('scroll-locked');
-                        const modalContent = modal.querySelector('.modal-content');
-                        modalContent.classList.remove('form-submitted');
-                        
-                        setTimeout(() => {
-                            if (window.resetContactForm) {
-                                window.resetContactForm();
-                            }
-                        }, 300);
-                    }
+                    closeModalAnimated(modal);
                 }
             });
         });
@@ -1849,22 +2300,7 @@
             if (e.key === 'Escape') {
                 modals.forEach(modal => {
                     if (modal.classList.contains('active')) {
-                        modal.classList.remove('active');
-                        document.body.style.overflow = 'auto';
-                        
-                        // Reset contact form when closing contact modal
-                        if (modal.id === 'contactModal') {
-                            // Unlock scrolling and make modal scrollable again
-                            document.body.classList.remove('scroll-locked');
-                            const modalContent = modal.querySelector('.modal-content');
-                            modalContent.classList.remove('form-submitted');
-                            
-                            setTimeout(() => {
-                                if (window.resetContactForm) {
-                                    window.resetContactForm();
-                                }
-                            }, 300);
-                        }
+                        closeModalAnimated(modal);
                     }
                 });
             }
@@ -1881,9 +2317,9 @@
             const modal = document.getElementById('contactModal');
             const modalContent = modal.querySelector('.modal-content');
 
-            if (!form) return; // Exit if form doesn't exist
+            if (!form) return;
 
-            // Form validation
+            // Form validation with enhanced animations
             function validateField(field) {
                 const value = field.value.trim();
                 const fieldGroup = field.closest('.form-group');
@@ -1927,7 +2363,7 @@
                 return isValid;
             }
 
-            // Real-time validation
+            // Real-time validation with enhanced feedback
             const formFields = form.querySelectorAll('input, textarea');
             formFields.forEach(field => {
                 field.addEventListener('blur', () => validateField(field));
@@ -1936,9 +2372,28 @@
                         validateField(field);
                     }
                 });
+                
+                // Add focus animations
+                field.addEventListener('focus', () => {
+                    field.parentElement.classList.add('focused');
+                });
+                
+                field.addEventListener('blur', () => {
+                    if (!field.value) {
+                        field.parentElement.classList.remove('focused');
+                    }
+                });
+
+                // Make labels clickable
+                const label = field.parentElement.querySelector('label');
+                if (label) {
+                    label.addEventListener('click', () => {
+                        field.focus();
+                    });
+                }
             });
 
-            // Form submission
+            // Form submission with enhanced animations
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
@@ -1951,10 +2406,15 @@
                 });
 
                 if (!isFormValid) {
+                    // Shake the form on validation error
+                    form.style.animation = 'inputShake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        form.style.animation = '';
+                    }, 500);
                     return;
                 }
 
-                // Show loading state
+                // Show loading state with smooth animation
                 submitBtn.classList.add('loading');
                 submitBtn.disabled = true;
 
@@ -1985,19 +2445,18 @@
             });
 
             function showSuccess() {
-                // Create confetti
-                createConfetti();
+                // Create confetti with enhanced animation
+                createEnhancedConfetti();
                 
                 // Lock scrolling and make modal non-scrollable
                 document.body.classList.add('scroll-locked');
                 modalContent.classList.add('form-submitted');
                 
-                // Hide form and show success
+                // Hide form with smooth transition
                 formContainer.classList.add('hidden');
                 
                 setTimeout(() => {
                     successContainer.classList.add('show');
-                    // Smooth scroll to top of modal content
                     modalContent.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -2015,7 +2474,6 @@
                 formContainer.classList.add('hidden');
                 setTimeout(() => {
                     errorContainer.classList.add('show');
-                    // Smooth scroll to top of modal content
                     modalContent.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -2029,14 +2487,14 @@
                 document.body.classList.remove('scroll-locked');
                 modalContent.classList.remove('form-submitted');
                 
-                // Hide success/error containers
+                // Hide success/error containers with animation
                 successContainer.classList.remove('show');
                 errorContainer.classList.remove('show');
                 
                 // Clear form validation states
                 const formGroups = form.querySelectorAll('.form-group');
                 formGroups.forEach(group => {
-                    group.classList.remove('error');
+                    group.classList.remove('error', 'focused');
                     const errorMessage = group.querySelector('.error-message');
                     errorMessage.classList.remove('show');
                 });
@@ -2044,7 +2502,7 @@
                 // Reset form
                 form.reset();
                 
-                // Show form again
+                // Show form again with smooth transition
                 setTimeout(() => {
                     formContainer.classList.remove('hidden');
                 }, 300);
@@ -2056,21 +2514,15 @@
                 modalContent.classList.remove('form-submitted');
                 
                 const modal = document.getElementById('contactModal');
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-                
-                // Reset form when closing
-                setTimeout(() => {
-                    if (window.resetContactForm) {
-                        window.resetContactForm();
-                    }
-                }, 300);
+                closeModalAnimated(modal);
             };
         }
 
-        function createConfetti() {
-            const colors = ['#22c55e', '#15803d', '#10b981', '#34d399', '#6ee7b7'];
-            const confettiCount = 50;
+        // Enhanced confetti with more variety
+        function createEnhancedConfetti() {
+            const colors = ['#22c55e', '#15803d', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0'];
+            const shapes = ['circle', 'square'];
+            const confettiCount = 60;
 
             for (let i = 0; i < confettiCount; i++) {
                 setTimeout(() => {
@@ -2081,10 +2533,17 @@
                     confetti.style.animationDelay = Math.random() * 0.5 + 's';
                     confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
                     
-                    // Random shapes
-                    if (Math.random() > 0.5) {
+                    // Random shapes and sizes
+                    const size = Math.random() * 8 + 6;
+                    confetti.style.width = size + 'px';
+                    confetti.style.height = size + 'px';
+                    
+                    if (shapes[Math.floor(Math.random() * shapes.length)] === 'circle') {
                         confetti.style.borderRadius = '50%';
                     }
+                    
+                    // Random rotation
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
                     
                     document.body.appendChild(confetti);
                     
@@ -2092,15 +2551,14 @@
                     setTimeout(() => {
                         confetti.remove();
                     }, 4000);
-                }, i * 50);
+                }, i * 30);
             }
         }
 
-        // Contact modal
+        // Contact modal with enhanced animations
         function openContactModal() {
             const modal = document.getElementById('contactModal');
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            openModalAnimated(modal);
             
             // Initialize form functionality if not already done
             setTimeout(() => {
@@ -2108,13 +2566,13 @@
             }, 100);
         }
 
-        // Gallery lightbox functionality
+        // Enhanced Gallery lightbox functionality
         const lightbox = document.getElementById('imageLightbox');
         const lightboxImage = lightbox.querySelector('.lightbox-image');
         const lightboxCaption = lightbox.querySelector('.lightbox-caption');
         const lightboxClose = lightbox.querySelector('.lightbox-close');
 
-        // Add click handlers to all gallery items
+        // Add click handlers to all gallery items with enhanced animations
         function initializeGallery() {
             const galleryItems = document.querySelectorAll('.gallery-item');
             
@@ -2128,17 +2586,42 @@
                         lightboxImage.src = imageSrc;
                         lightboxImage.alt = caption;
                         lightboxCaption.textContent = caption;
+                        
+                        // Add loading state
+                        lightboxImage.classList.add('loading-pulse');
+                        
+                        lightboxImage.onload = () => {
+                            lightboxImage.classList.remove('loading-pulse');
+                        };
+                        
                         lightbox.classList.add('active');
                         document.body.style.overflow = 'hidden';
                     }
                 });
+                
+                // Add hover effect preview
+                item.addEventListener('mouseenter', () => {
+                    item.style.transform = 'translateY(-5px) scale(1.05)';
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'translateY(0) scale(1)';
+                });
             });
         }
 
-        // Close lightbox
+        // Close lightbox with enhanced animation
         function closeLightbox() {
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            const lightboxContent = lightbox.querySelector('.lightbox-content');
+            lightboxContent.style.transform = 'scale(0.9)';
+            lightbox.style.opacity = '0';
+            
+            setTimeout(() => {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                lightboxContent.style.transform = 'scale(1)';
+                lightbox.style.opacity = '1';
+            }, 300);
         }
 
         lightboxClose.addEventListener('click', closeLightbox);
@@ -2160,24 +2643,38 @@
         // Initialize gallery when page loads
         initializeGallery();
 
-        // Add parallax effect to background
-        window.addEventListener('scroll', () => {
+        // Enhanced parallax effect for background
+        let ticking = false;
+        function updateParallax() {
             const scrolled = window.pageYOffset;
             const background = document.querySelector('.background-animation');
-            background.style.transform = `translateY(${scrolled * 0.5}px)`;
-        });
+            const rate = scrolled * -0.3;
+            background.style.transform = `translate3d(0, ${rate}px, 0)`;
+            ticking = false;
+        }
 
-        // Card intersection observer for animation
+        function requestParallaxUpdate() {
+            if (!ticking) {
+                requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', requestParallaxUpdate);
+
+        // Enhanced card intersection observer for staggered animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+            entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
                 }
             });
         }, observerOptions);
@@ -2187,101 +2684,66 @@
         allCards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px)';
-            card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
+            card.style.transition = `opacity 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${index * 0.1}s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${index * 0.1}s`;
             observer.observe(card);
         });
 
-       // Add mouse movement effect to cards (only on desktop)
-        function enableCard3DEffect() {
+        // Enhanced card hover effects (without 3D tracking)
+        function enableCardHoverEffects() {
             const allCards = document.querySelectorAll('.card, .project-card');
-            const isDesktop = window.matchMedia('(pointer: fine) and (min-width: 900px)').matches;
-
+            
             allCards.forEach(card => {
-                // Remove previous listeners
-                card.onmousemove = null;
-                card.onmouseleave = null;
-                card.style.transition = '';
-
-                // State for smoothing
-                let targetRotateX = 0, targetRotateY = 0;
-                let currentRotateX = 0, currentRotateY = 0;
-                let animating = false;
-
-                // Store the original bounding rect for calculations
-                let originalRect = null;
-
-                function animate() {
-                    // Smoothly interpolate toward target
-                    currentRotateX += (targetRotateX - currentRotateX) * 0.15;
-                    currentRotateY += (targetRotateY - currentRotateY) * 0.15;
-
-                    if (card.classList.contains('project-card')) {
-                        card.style.transform = `translateY(-10px) scale(1.02) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
-                    } else {
-                        card.style.transform = `translateY(-5px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg)`;
-                    }
-
-                    // Continue animating if not close to target
-                    if (Math.abs(currentRotateX - targetRotateX) > 0.1 || Math.abs(currentRotateY - targetRotateY) > 0.1) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        animating = false;
-                    }
-                }
-
-                if (isDesktop) {
-                    card.addEventListener('mouseenter', function() {
-                        // Capture the original bounding rect on enter
-                        originalRect = card.getBoundingClientRect();
-                    });
-
-                    card.addEventListener('mousemove', function(e) {
-                        if (!originalRect) originalRect = card.getBoundingClientRect();
-                        const x = e.clientX - originalRect.left;
-                        const y = e.clientY - originalRect.top;
-                        const centerX = originalRect.width / 2;
-                        const centerY = originalRect.height / 2;
-                        targetRotateX = (y - centerY) / 24;
-                        targetRotateY = (centerX - x) / 24;
-                        if (!animating) {
-                            animating = true;
-                            animate();
-                        }
-                    });
-
-                    card.addEventListener('mouseleave', function() {
-                        targetRotateX = 0;
-                        targetRotateY = 0;
-                        if (!animating) {
-                            animating = true;
-                            animate();
-                        }
-                    });
-                } else {
-                    card.style.transform = 'translateY(0) scale(1) rotateX(0deg) rotateY(0deg)';
-                }
+                // Simple hover effects only
+                card.addEventListener('mouseenter', function() {
+                    // Hover effects are handled by CSS
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    // Reset handled by CSS
+                });
             });
         }
         
-        enableCard3DEffect();
-        window.addEventListener('resize', enableCard3DEffect);
+        // Initialize hover effects
+        enableCardHoverEffects();
 
         // Initialize contact form when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeContactForm();
         });
 
-        // Fake theme toggle functions
+        // Enhanced fake theme toggle functions with smooth transitions
         function toggleFakeTheme() {
             const overlay = document.getElementById('fakeLightMode');
-            overlay.classList.add('active');
+            overlay.style.display = 'flex';
             document.body.style.overflow = 'hidden';
+            
+            // Trigger entrance animation
+            setTimeout(() => {
+                overlay.classList.add('active');
+            }, 10);
+            
+            // Add visual feedback for button
+            const themeToggle = document.querySelector('.theme-toggle');
+            themeToggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 150);
         }
 
         function switchBackToDark() {
             const overlay = document.getElementById('fakeLightMode');
+            
+            // Add exit animation class and remove active
+            overlay.classList.add('exiting');
             overlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
+            
+            // Wait for animation to complete before hiding
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                overlay.classList.remove('exiting');
+                document.body.style.overflow = 'auto';
+            }, 600);
         }
 
         // Close fake light mode when clicking on the overlay (but not the message)
@@ -2299,6 +2761,125 @@
                     switchBackToDark();
                 }
             }
+        });
+
+        // Enhanced button hover effects
+        document.querySelectorAll('.contact-btn, .back-btn, .retry-btn, .submit-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+            
+            btn.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(-1px) scale(1.02)';
+            });
+            
+            btn.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            });
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Performance optimization: debounce resize events
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                enableCardHoverEffects();
+            }, 250);
+        });
+
+        // Add loading states for images
+        document.querySelectorAll('img').forEach(img => {
+            if (!img.complete) {
+                img.classList.add('loading-pulse');
+                img.addEventListener('load', function() {
+                    this.classList.remove('loading-pulse');
+                });
+            }
+        });
+
+        // Enhanced tech tag interactions
+        document.querySelectorAll('.tech-tag').forEach(tag => {
+            tag.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px) scale(1.1)';
+                
+                // Add glow effect
+                const color = getComputedStyle(this).getPropertyValue('border-color');
+                this.style.boxShadow = `0 4px 8px ${color}30`;
+            });
+            
+            tag.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Add subtle animation to arrows
+        document.querySelectorAll('.arrow').forEach(arrow => {
+            const parentCard = arrow.closest('.card, .project-card');
+            if (parentCard) {
+                parentCard.addEventListener('mouseenter', () => {
+                    arrow.style.animation = 'pulse 1.5s infinite';
+                });
+                
+                parentCard.addEventListener('mouseleave', () => {
+                    arrow.style.animation = '';
+                });
+            }
+        });
+
+        // Initialize all animations and interactions
+        function initializeAllInteractions() {
+            // Re-initialize gallery after any DOM changes
+            initializeGallery();
+            
+            // Re-apply hover effects
+            enableCardHoverEffects();
+            
+            // Re-observe new elements if any
+            document.querySelectorAll('.card:not([data-observed]), .project-card:not([data-observed])').forEach((card, index) => {
+                card.setAttribute('data-observed', 'true');
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = `opacity 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${index * 0.1}s, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${index * 0.1}s`;
+                observer.observe(card);
+            });
+        }
+
+        // Call initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAllInteractions);
+        } else {
+            initializeAllInteractions();
+        }
+
+        // Keyboard navigation enhancements
+        document.addEventListener('keydown', (e) => {
+            // Tab navigation with visual feedback
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+            }
+        });
+
+        document.addEventListener('mousedown', () => {
+            document.body.classList.remove('keyboard-nav');
         });
     </script>
 </body>
