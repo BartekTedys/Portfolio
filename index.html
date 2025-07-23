@@ -433,13 +433,123 @@
         }
 
         .tech-tag {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid var(--accent-green);
-            color: var(--accent-green);
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
+            border: 1px solid;
+            transition: all 0.3s ease;
+        }
+
+        /* Default green for unlisted technologies */
+        .tech-tag:not([class*="tech-"]) {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* HTML5 - Orange */
+        .tech-html5 {
+            background: rgba(241, 101, 41, 0.1);
+            border-color: #f16529;
+            color: #f16529;
+        }
+
+        /* CSS3 - Blue */
+        .tech-css3 {
+            background: rgba(21, 114, 182, 0.1);
+            border-color: #1572b6;
+            color: #1572b6;
+        }
+
+        /* JavaScript - Yellow */
+        .tech-javascript {
+            background: rgba(247, 223, 30, 0.1);
+            border-color: #f7df1e;
+            color: #e6c721;
+        }
+
+        /* Python - Blue */
+        .tech-python {
+            background: rgba(55, 118, 171, 0.1);
+            border-color: #3776ab;
+            color: #3776ab;
+        }
+
+        /* PyTorch - Orange/Red */
+        .tech-pytorch {
+            background: rgba(238, 76, 44, 0.1);
+            border-color: #ee4c2c;
+            color: #ee4c2c;
+        }
+
+        /* TensorFlow - Orange */
+        .tech-tensorflow {
+            background: rgba(255, 109, 7, 0.1);
+            border-color: #ff6d07;
+            color: #ff6d07;
+        }
+
+        /* React Native - Cyan */
+        .tech-react {
+            background: rgba(97, 218, 251, 0.1);
+            border-color: #61dafb;
+            color: #61dafb;
+        }
+
+        /* TypeScript - Blue */
+        .tech-typescript {
+            background: rgba(49, 120, 198, 0.1);
+            border-color: #3178c6;
+            color: #3178c6;
+        }
+
+        /* D3.js - Orange */
+        .tech-d3 {
+            background: rgba(240, 135, 51, 0.1);
+            border-color: #f08733;
+            color: #f08733;
+        }
+
+        /* Computer Vision - Purple */
+        .tech-cv {
+            background: rgba(138, 43, 226, 0.1);
+            border-color: #8a2be2;
+            color: #8a2be2;
+        }
+
+        /* Mobile Development - Green */
+        .tech-mobile {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        /* Responsive Design - Purple */
+        .tech-responsive {
+            background: rgba(156, 39, 176, 0.1);
+            border-color: #9c27b0;
+            color: #9c27b0;
+        }
+
+        /* QGIS - Green */
+        .tech-qgis {
+            background: rgba(96, 165, 67, 0.1);
+            border-color: #60a543;
+            color: #60a543;
+        }
+
+        /* Collaboration - Gray */
+        .tech-collaboration {
+            background: rgba(158, 158, 158, 0.1);
+            border-color: #9e9e9e;
+            color: #9e9e9e;
+        }
+
+        /* Hover effects */
+        .tech-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .back-btn {
@@ -1123,10 +1233,10 @@
                     <h3>M&L Home Builds Website</h3>
                     <p>Built a website that tripled their leads in 2 weeks. Sometimes the old-school HTML/CSS/JS approach just works. No fancy frameworks needed when speed and reliability matter most.</p>
                     <div class="tech-stack">
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS3</span>
-                        <span class="tech-tag">JavaScript</span>
-                        <span class="tech-tag">Responsive Design</span>
+                        <span class="tech-tag tech-html5">HTML5</span>
+                        <span class="tech-tag tech-css3">CSS3</span>
+                        <span class="tech-tag tech-javascript">JavaScript</span>
+                        <span class="tech-tag tech-responsive">Responsive Design</span>
                     </div>
                     <div class="card-footer">
                         <span>View details</span>
@@ -1141,10 +1251,10 @@
                     <h3>Computer Vision Research - Caeli</h3>
                     <p>Taught machines to count trees from space. Sounds sci-fi, but it's helping track deforestation in real-time. PyTorch and I became very close friends during this project.</p>
                     <div class="tech-stack">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">PyTorch</span>
-                        <span class="tech-tag">TensorFlow</span>
-                        <span class="tech-tag">Computer Vision</span>
+                        <span class="tech-tag tech-python">Python</span>
+                        <span class="tech-tag tech-pytorch">PyTorch</span>
+                        <span class="tech-tag tech-tensorflow">TensorFlow</span>
+                        <span class="tech-tag tech-cv">Computer Vision</span>
                     </div>
                     <div class="card-footer">
                         <span>View details</span>
@@ -1159,10 +1269,10 @@
                     <h3>University Thesis Project</h3>
                     <p>My final thesis: comparing AI models that detect tree canopies in aerial photos. Basically teaching computers to be better at spotting forests than humans. Spoiler: they're getting pretty good at it.</p>
                     <div class="tech-stack">
-                        <span class="tech-tag">PyTorch</span>
-                        <span class="tech-tag">TensorFlow</span>
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">QGIS</span>
+                        <span class="tech-tag tech-pytorch">PyTorch</span>
+                        <span class="tech-tag tech-tensorflow">TensorFlow</span>
+                        <span class="tech-tag tech-python">Python</span>
+                        <span class="tech-tag tech-qgis">QGIS</span>
                     </div>
                     <div class="card-footer">
                         <span>View details</span>
@@ -1177,10 +1287,10 @@
                     <h3>Binqy Mobile App</h3>
                     <p>Built a mobile app for a Dutch startup during my Amsterdam exchange. Working with international teams taught me that good code speaks every language, but merge conflicts are universal.</p>
                     <div class="tech-stack">
-                        <span class="tech-tag">React Native</span>
-                        <span class="tech-tag">TypeScript</span>
-                        <span class="tech-tag">Mobile Development</span>
-                        <span class="tech-tag">Collaboration</span>
+                        <span class="tech-tag tech-react">React Native</span>
+                        <span class="tech-tag tech-typescript">TypeScript</span>
+                        <span class="tech-tag tech-mobile">Mobile Development</span>
+                        <span class="tech-tag tech-collaboration">Collaboration</span>
                     </div>
                     <div class="card-footer">
                         <span>View details</span>
@@ -1195,8 +1305,8 @@
                     <h3>University Data Visualisation Project</h3>
                     <p>Turned messy environmental datasets into interactive dashboards that actually tell stories. This is where I learned that good data analysis isn't about complex algorithms - it's about helping people understand what their data is trying to tell them.</p>
                     <div class="tech-stack">
-                        <span class="tech-tag">HTML/CSS/JS</span>
-                        <span class="tech-tag">D3.js</span>
+                        <span class="tech-tag tech-javascript">HTML/CSS/JS</span>
+                        <span class="tech-tag tech-d3">D3.js</span>
                     </div>
                     <div class="card-footer">
                         <span>View details</span>
