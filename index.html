@@ -23,6 +23,8 @@
             --accent-mint: #15803d;
             --gradient-green: linear-gradient(135deg, var(--accent-green), var(--accent-mint));
             --glow-green: rgba(34, 197, 94, 0.25);
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
         }
 
         body {
@@ -31,6 +33,12 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+        }
+
+        /* Scroll lock when needed */
+        body.scroll-locked {
+            overflow: hidden;
+            height: 100vh;
         }
 
         /* Animated background */
@@ -447,9 +455,15 @@
             margin-bottom: 1rem;
         }
 
-        /* Contact form styles */
+        /* Enhanced Contact Form Styles */
+        .form-container {
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
+            position: relative;
         }
 
         .form-group label {
@@ -457,6 +471,7 @@
             margin-bottom: 0.5rem;
             color: var(--accent-green);
             font-weight: 600;
+            transition: color 0.3s ease;
         }
 
         .form-group input,
@@ -468,19 +483,45 @@
             background: var(--primary-bg);
             color: var(--text-primary);
             font-family: inherit;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 1rem;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: var(--accent-green);
-            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+            transform: translateY(-2px);
         }
 
         .form-group textarea {
             resize: vertical;
             min-height: 120px;
+        }
+
+        .form-group.error input,
+        .form-group.error textarea {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-group.error label {
+            color: var(--error-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .submit-btn {
@@ -493,11 +534,203 @@
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px var(--glow-green);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-text {
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-loader {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-bg);
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .submit-btn.loading .btn-text {
+            opacity: 0;
+        }
+
+        .submit-btn.loading .btn-loader {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success state */
+        .success-container, .error-container {
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -40%) scale(0.8);
+            width: 80%;
+        }
+
+        .success-container.show, .error-container.show {
+            opacity: 1;
+            transform: translate(-50%, -40%) scale(1);
+        }
+
+        /* Make modal non-scrollable when showing success/error */
+        .modal-content.form-submitted {
+            overflow: hidden;
+            max-height: 80vh;
+        }
+
+        .success-icon, .error-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .success-icon {
+            background: var(--gradient-green);
+            animation: successPulse 1s ease-out;
+        }
+
+        .success-icon::after {
+            content: '✓';
+            color: var(--primary-bg);
+        }
+
+        .error-icon {
+            background: linear-gradient(135deg, var(--error-color), #dc2626);
+            animation: errorShake 0.5s ease-out;
+        }
+
+        .error-icon::after {
+            content: '✕';
+            color: white;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .success-title, .error-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            color: var(--accent-green);
+        }
+
+        .error-title {
+            color: var(--error-color);
+        }
+
+        .success-message, .error-message-text {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .retry-btn {
+            background: var(--gradient-green);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            color: var(--primary-bg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--glow-green);
+        }
+
+        .form-back-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .form-back-btn:hover {
+            background: var(--accent-green);
+            color: var(--primary-bg);
+            transform: translateY(-2px);
+        }
+
+        .form-container.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--accent-green);
+            top: -10px;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
         /* Modern Scrollbar */
@@ -681,6 +914,11 @@
                 padding: 2rem;
                 margin: 1rem;
             }
+
+            .success-container,
+            .error-container {
+                width: 90%;
+            }
         }
     </style>
 </head>
@@ -698,9 +936,9 @@
     <div class="page active" id="homePage">
         <main>
             <section class="hero">
-                <div class="hero-subtitle">UI/UX + AI/ML Specialist | Building Smart, Intuitive Products</div>
+                <div class="hero-subtitle">Web Developer + Data Analyst | Building Digital Solutions That Drive Decisions</div>
                 <h1>Bartlomiej Tedys</h1>
-                <p>Helping small-medium businesses grow through intelligent design and analytics. Combining modern web development with machine learning expertise to create user experiences that drive results.</p>
+                <p>I build websites that convert visitors into customers AND turn your data into actionable insights. Whether you need a high-performing website, data dashboards, or AI-powered analytics - I speak both code and data.</p>
             </section>
 
             <div class="cards-container">
@@ -710,9 +948,9 @@
                     </div>
                     <div class="card-content">
                         <h3>About Me</h3>
-                        <p>Passionate developer with expertise in creating intuitive user interfaces and powerful data-driven solutions. I bridge the gap between design and technology, combining creative vision with analytical thinking to deliver exceptional results.</p>
+                        <p>Polish-born, Ireland-based developer who codes websites by day and wrangles data by night. I build web applications that look great AND help you understand what your customers are actually doing. Think of me as a translator between your business goals and what the data is trying to tell you.</p>
                         <div class="card-footer">
-                            <span>Learn more</span>
+                            <span>The full story</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -724,9 +962,9 @@
                     </div>
                     <div class="card-content">
                         <h3>Education</h3>
-                        <p>Strong academic foundation in computer science, design, and data science. Continuously learning and staying updated with the latest technologies and trends in UI/UX design and machine learning development.</p>
+                        <p>Just wrapped up my Software Development degree in Cork (2025!), with a semester abroad in Amsterdam where I learned that Dutch coffee is questionably strong but their tech scene is incredible.</p>
                         <div class="card-footer">
-                            <span>View details</span>
+                            <span>Academic journey</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -738,9 +976,9 @@
                     </div>
                     <div class="card-content">
                         <h3>Projects & Experience</h3>
-                        <p>Proven track record in delivering high-quality projects across various industries. From startups to enterprise solutions, bringing innovative ideas to life through thoughtful design and robust technical implementation.</p>
+                        <p>From building websites that tripled client leads to training AI models that count trees from space. I've analysed satellite imagery, built data pipelines, created predictive models, and somehow survived multiple group projects along the way.</p>
                         <div class="card-footer">
-                            <span>Explore projects</span>
+                            <span>See the work</span>
                             <span class="arrow">→</span>
                         </div>
                     </div>
@@ -756,7 +994,7 @@
             
             <section class="hero">
                 <h1>Projects & Experience</h1>
-                <p>A showcase of my work in UI/UX design and data/ML development.</p>
+                <p>Real web development, real data analysis, real results - plus the occasional learning disaster that taught me more than any success.</p>
             </section>
 
             <div class="projects-container">
@@ -765,7 +1003,7 @@
                         <img src="images/projects/mlrenovations.PNG" alt="M&L Home Builds Website" />
                     </div>
                     <h3>M&L Home Builds Website</h3>
-                    <p>Responsive business website using core web technologies that increased online leads by 300% within 2 weeks. Complete project lifecycle from consultation to deployment with ongoing optimisations.</p>
+                    <p>Built a website that tripled their leads in 2 weeks. Sometimes the old-school HTML/CSS/JS approach just works. No fancy frameworks needed when speed and reliability matter most.</p>
                     <div class="tech-stack">
                         <span class="tech-tag">HTML5</span>
                         <span class="tech-tag">CSS3</span>
@@ -783,7 +1021,7 @@
                         <img src="images/projects/caeli.PNG" alt="Caeli Tree Detection Model" />
                     </div>
                     <h3>Computer Vision Research - Caeli</h3>
-                    <p>Deep learning models for automated tree detection in satellite imagery using PyTorch and TensorFlow. Built production-ready computer vision solutions for environmental monitoring.</p>
+                    <p>Taught machines to count trees from space. Sounds sci-fi, but it's helping track deforestation in real-time. PyTorch and I became very close friends during this project.</p>
                     <div class="tech-stack">
                         <span class="tech-tag">Python</span>
                         <span class="tech-tag">PyTorch</span>
@@ -801,7 +1039,7 @@
                          <img src="images/projects/thesis.PNG" alt="University Thesis" />
                     </div>
                     <h3>University Thesis Project</h3>
-                    <p>Optimised Computer Vision algorithms for scalable tree canopy detection and segmentation from aerial imagery.</p>
+                    <p>My final thesis: comparing AI models that detect tree canopies in aerial photos. Basically teaching computers to be better at spotting forests than humans. Spoiler: they're getting pretty good at it.</p>
                     <div class="tech-stack">
                         <span class="tech-tag">PyTorch</span>
                         <span class="tech-tag">TensorFlow</span>
@@ -819,7 +1057,7 @@
                         <img src="images/projects/binqy.svg" alt="Binqy Mobile App" />
                     </div>
                     <h3>Binqy Mobile App</h3>
-                    <p>React Native mobile application for Dutch startup developed during university exchange program. Collaborative project resulting in a production-ready app with active user base.</p>
+                    <p>Built a mobile app for a Dutch startup during my Amsterdam exchange. Working with international teams taught me that good code speaks every language, but merge conflicts are universal.</p>
                     <div class="tech-stack">
                         <span class="tech-tag">React Native</span>
                         <span class="tech-tag">TypeScript</span>
@@ -832,14 +1070,12 @@
                     </div>
                 </div>
 
-                
-
                 <div class="project-card" data-project="project5">
                     <div class="project-image">
                         <img src="images/projects/visualisation.PNG" alt="Environmental Data Visualisation Project" />
                     </div>
                     <h3>University Data Visualisation Project</h3>
-                    <p>Interactive platform for complex data exploration with custom visualisation components developed as part of advanced coursework.</p>
+                    <p>Turned messy environmental datasets into interactive dashboards that actually tell stories. This is where I learned that good data analysis isn't about complex algorithms - it's about helping people understand what their data is trying to tell them.</p>
                     <div class="tech-stack">
                         <span class="tech-tag">HTML/CSS/JS</span>
                         <span class="tech-tag">D3.js</span>
@@ -849,8 +1085,6 @@
                         <span class="arrow">→</span>
                     </div>
                 </div>
-
-                
             </div>
         </main>
     </div>
@@ -864,26 +1098,28 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Welcome! I'm a passionate UI/UX designer and Data/ML specialist helping small-medium businesses grow through intelligent design and analytics. I combine modern web development with machine learning expertise to create user experiences that drive results.</p>
+                <p>Hey there! I'm Bart (because "Bartlomiej" breaks most keyboards). I'm a 21-year-old developer from Poland who somehow ended up in Ireland building websites, analysing data, and teaching AI to recognise patterns in everything from customer behavior to satellite imagery.</p>
                 
-                <h4>Recent Success</h4>
-                <p>Recently delivered a business website that increased client leads by 300% within just 2 weeks. My background spans computer vision research, mobile app development, and international experience from studying in both Ireland and the Netherlands.</p>
+                <h4>The Origin Story</h4>
+                <p>Started coding when I was 12 because I wanted to make video games. Turns out game development is hard, but web development and data analysis? Those clicked immediately. Now I'm the person businesses call when they need both a website that converts AND insights from their data that actually help them make better decisions.</p>
 
-                <h4>What I Specialise In</h4>
+                <h4>What I Actually Do</h4>
                 <ul>
-                    <li>Frontend development with modern frameworks (React, Next.js)</li>
-                    <li>Responsive design using Tailwind CSS, CSS3, and modern styling approaches</li>
-                    <li>Data analytics and ML solutions for business insights</li>
-                    <li>Converting complex data into user-friendly interfaces</li>
-                    <li>Full project lifecycle from consultation to deployment</li>
-                    <li>Mobile app development with React Native and Flutter</li>
+                    <li>Build websites and web apps that convert visitors into customers (recent client saw 300% more leads)</li>
+                    <li>Create data dashboards that turn spreadsheet chaos into clear business insights</li>
+                    <li>Develop AI/ML models for everything from computer vision to predictive analytics</li>
+                    <li>Design data pipelines that automatically collect, clean, and analyse your business data</li>
+                    <li>Build React and Next.js applications with integrated analytics and reporting features</li>
+                    <li>Transform raw data into visualisations that even your least data-savvy team members can understand</li>
+                    <li>Write Python scripts that automate boring data tasks so you can focus on strategy</li>
+                    <li>Translate between "what the data says" and "what this means for your business"</li>
                 </ul>
 
-                <h4>Technical Expertise</h4>
-                <p>Proficient in JavaScript/TypeScript, Python, and modern frameworks including React, Next.js, and Tailwind CSS. Experience with machine learning libraries like PyTorch and TensorFlow, plus database technologies including SQL/NoSQL, Docker, and Kubernetes.</p>
+                <h4>The Technical Arsenal</h4>
+                <p>Web side: JavaScript/TypeScript, React, Next.js, Tailwind CSS, and whatever gets your site fast and functional. Data side: Python, pandas, PyTorch, TensorFlow, SQL, and all the tools needed to make sense of your data. I also speak fluent "can you make this into a chart?" and "what does this data actually mean?"</p>
 
-                <h4>My Approach</h4>
-                <p>Whether you need a high-converting website, data dashboard, or smart user interface, I deliver solutions that combine aesthetic design with data-driven performance. Every project focuses on user experience whilst leveraging analytics to maximise business impact.</p>
+                <h4>Why This Combo Matters</h4>
+                <p>Most developers build websites. Most data analysts crunch numbers. I do both, which means I can build you a website that not only looks great but also tracks the right metrics, provides actionable insights, and helps you understand what's actually driving your business growth. It's web development with a brain for data.</p>
             </div>
         </div>
     </div>
@@ -897,48 +1133,96 @@
             </div>
             <div class="modal-body">
                 <h4>Munster Technological University, Cork, Ireland</h4>
-                <p><strong>2021 - 2025</strong></p>
+                <p><strong>2021 - 2025 (just finished!)</strong></p>
                 <p><strong>Bachelor of Science (Honours) - Software Development</strong></p>
-                <p>Comprehensive software engineering programme covering full-stack web development with multiple frameworks, machine learning, and big data analytics. Coursework included advanced topics in microservices architecture (Docker/Kubernetes), database design (SQL/NoSQL), embedded systems, cybersecurity, and modern development practices.</p>
+                <p>Four years of learning how to break things properly before fixing them. The course covered everything from "Hello World" to deploying apps that thousands of people actually use. I particularly enjoyed the modules where we got to build real projects instead of toy examples.</p>
 
-                <p><strong>Thesis:</strong> Optimised deep learning architectures for computer vision, building on industry research to improve automated detection systems in real-world applications.</p>
+                <p><strong>Final Year Thesis:</strong> I'm comparing three different AI models to see which one is best at spotting individual trees in aerial photos. Turns out machines are getting scary good at this stuff.</p>
 
                 <h4>Hogeschool van Amsterdam, Netherlands</h4>
-                <p><strong>2023 - 2024</strong></p>
-                <p><strong>Exchange Programme - Big Data & Mobile Application Development</strong></p>
-                <p>Completed dual Erasmus exchange semesters, specialising in mobile app development and big data analytics. Developed a production-ready mobile application for a Dutch startup using React Native as part of a collaborative international project.</p>
+                <p><strong>2023 - 2024 (Erasmus Exchange)</strong></p>
+                <p><strong>Big Data & Mobile App Development</strong></p>
+                <p>Spent a year in Amsterdam learning about big data while trying not to get run over by cyclists. Built a mobile app for a local startup and discovered that working with international teams means debugging code in three different time sones.</p>
 
-                <h4>Relevant Coursework</h4>
+                <h4>What I Actually Learned</h4>
                 <ul>
-                    <li>Advanced Web Development (React, Next.js)</li>
-                    <li>Machine Learning & Artificial Intelligence</li>
-                    <li>Data Structures & Algorithms</li>
-                    <li>Big Data Analytics & Visualisation</li>
-                    <li>Mobile Application Development</li>
-                    <li>Database Management Systems</li>
-                    <li>Software Engineering & DevOps</li>
-                    <li>Human-Computer Interaction</li>
-                    <li>Computer Vision & Deep Learning</li>
+                    <li>How to build web apps that don't fall over when people use them</li>
+                    <li>Machine learning beyond the hype (most problems don't need AI, but when they do, here's how)</li>
+                    <li>Database design that won't make future developers hate you</li>
+                    <li>Mobile development that works on both iPhone and Android (it's harder than it looks)</li>
+                    <li>How to work in teams without losing your sanity</li>
+                    <li>Why documentation matters (learned this the hard way)</li>
+                    <li>Docker and Kubernetes (because apparently everything needs to be containerised now)</li>
+                    <li>How to explain technical concepts to non-technical people (invaluable skill)</li>
                 </ul>
 
-                <h4>Academic Achievements</h4>
-                <p>Maintained high academic performance whilst gaining international experience across two educational systems. Successfully combined theoretical computer science knowledge with practical industry applications through internships and collaborative projects.</p>
+                <h4>The Real Education</h4>
+                <p>The best learning happened outside lectures: building actual projects, debugging at 2 AM, working with real clients, and figuring out how to make Amsterdam rent on a student budget. University taught me to code; experience taught me to solve problems.</p>
             </div>
         </div>
     </div>
 
-    <!-- Contact Modal -->
+    <!-- Updated Contact Modal -->
     <div class="modal" id="contactModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Contact Disabled</h2>
+                <h2 class="modal-title">Let's Build & Analyse</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <div class="modal-body" style="text-align:center;">
-                <p>
-                    The contact form is temporarily disabled in accordance with Upwork Terms of Service.<br>
-                    Please reach out via Upwork or where you reached this portfolio from for all communications.
+
+            <div class="form-container" id="formContainer">
+                <form id="contactForm" action="https://formspree.io/f/mblybljn" method="POST">
+                    <div class="form-group">
+                        <label for="name">Your Name *</label>
+                        <input type="text" id="name" name="name" required>
+                        <div class="error-message" id="nameError">What should I call you?</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError">I'll need your email to get back to you</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">What's This About? *</label>
+                        <input type="text" id="subject" name="subject" required>
+                        <div class="error-message" id="subjectError">Give me a hint about your project</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Tell Me About Your Project *</label>
+                        <textarea id="message" name="message" required placeholder="Need a website that converts? Data insights that drive decisions? An AI model that solves a specific problem? Or maybe all three? Tell me what you're trying to achieve."></textarea>
+                        <div class="error-message" id="messageError">I'd love to hear about your project</div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span class="btn-text">Send Message</span>
+                        <div class="btn-loader"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State -->
+            <div class="success-container" id="successContainer">
+                <div class="success-icon"></div>
+                <h3 class="success-title">Message Sent! 🎉</h3>
+                <p class="success-message">
+                    Thanks for reaching out! I'll get back to you within 24 hours (usually much faster). 
+                    I'm excited to hear about your project!
                 </p>
+                <button class="form-back-btn" onclick="resetContactForm()">Send Another Message</button>
+            </div>
+
+            <!-- Error State -->
+            <div class="error-container" id="errorContainer">
+                <div class="error-icon"></div>
+                <h3 class="error-title">Oops! Something Went Wrong</h3>
+                <p class="error-message-text" id="errorMessageText">
+                    Looks like there was a hiccup sending your message. Mind trying again? If it keeps failing, you can reach me directly on social media.
+                </p>
+                <button class="retry-btn" onclick="resetContactForm()">Try Again</button>
+                <button class="form-back-btn" onclick="closeContactModal()">Close</button>
             </div>
         </div>
     </div>
@@ -951,48 +1235,49 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <h4>Project Overview</h4>
-                <p><strong>January 2025 - Present | Freelance Web Developer</strong></p>
-                <p>Developed a responsive business website using core web technologies (HTML, CSS & JavaScript) that increased online leads by 300% within just 2 weeks. Managing ongoing optimisations and improvements to maintain peak performance. <a href="https://mlrenovations.ie/" target="_blank">https://mlrenovations.ie/</a></p>
+                <h4>The Challenge</h4>
+                <p><strong>January 2025 - Ongoing | Freelance Project</strong></p>
+                <p>A local construction company was losing potential customers to competitors with better websites. Their old site looked like it was built in 2010 and worked about as well as you'd expect. They needed something fast, professional, and most importantly - something that would actually bring in leads.</p>
 
-                <h4>Key Achievements</h4>
+                <h4>What I Built</h4>
                 <ul>
-                    <li>300% increase in online leads within 2 weeks of launch</li>
-                    <li>Fully responsive design optimised for all devices</li>
-                    <li>Implemented SEO best practices for improved visibility</li>
-                    <li>Integrated analytics tracking for performance monitoring</li>
-                    <li>Fast loading times and optimal user experience</li>
+                    <li>Completely rebuilt their online presence from scratch</li>
+                    <li>Mobile-first design (because most people browse on their phones)</li>
+                    <li>Lightning-fast loading times (nobody waits for slow websites)</li>
+                    <li>Clear call-to-actions that actually guide visitors to make contact</li>
+                    <li>SEO optimisation so people can actually find them on Google</li>
+                    <li>Analytics tracking to measure what's working</li>
                 </ul>
 
-                <h4>Technical Implementation</h4>
-                <p>Built using modern HTML5, CSS3, and vanilla JavaScript focusing on performance and accessibility. Implemented responsive design principles and optimised for search engines and conversion rates.</p>
+                <h4>The Results (This Is The Good Part)</h4>
+                <p>Within 2 weeks of launch, they saw a 300% increase in online leads. Not page views or bounce rates or other vanity metrics - actual potential customers filling out contact forms and calling them. That's the kind of result that makes this job worth it.</p>
 
-                <h4>Project Lifecycle</h4>
-                <p>Handled the complete project lifecycle from initial client consultation through design, development, testing, deployment, and ongoing maintenance. Continuous enhancements based on analytics data and client feedback.</p>
+                <h4>Why It Worked</h4>
+                <p>I kept it simple. No fancy animations or trendy design elements that distract from the main goal. Just clean, professional design that loads fast and makes it easy for visitors to understand what M&L does and how to hire them. Sometimes vanilla HTML, CSS, and JavaScript is exactly what you need.</p>
 
-                <h4>Business Impact</h4>
-                <p>The website transformation significantly improved the client's online presence, leading to substantial increases in customer enquiries and business growth. Ongoing optimisations ensure sustained performance improvements.</p>
+                <h4>Check It Out</h4>
+                <p>See the live site at <a href="https://mlrenovations.ie/" target="_blank" style="color: var(--accent-green);">mlrenovations.ie</a></p>
 
                 <div class="project-gallery">
-                    <h4>Project Gallery</h4>
+                    <h4>Project Screenshots</h4>
                     <div class="gallery-grid">
                         <div class="gallery-item" data-image="images/gallery/mlhomes/screenshot1.jpg" data-caption="Homepage Design">
-                            <div class="gallery-placeholder">Screenshot 1<br>Homepage</div>
+                            <div class="gallery-placeholder">Homepage<br>Hero Section</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/mlhomes/screenshot2.jpg" data-caption="Services Page">
-                            <div class="gallery-placeholder">Screenshot 2<br>Services</div>
+                            <div class="gallery-placeholder">Services<br>Overview</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/mlhomes/screenshot3.jpg" data-caption="Contact Form">
-                            <div class="gallery-placeholder">Screenshot 3<br>Contact</div>
+                            <div class="gallery-placeholder">Contact<br>Form</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/mlhomes/screenshot4.jpg" data-caption="Mobile View">
-                            <div class="gallery-placeholder">Screenshot 4<br>Mobile</div>
+                            <div class="gallery-placeholder">Mobile<br>Responsive</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/mlhomes/screenshot5.jpg" data-caption="Analytics Dashboard">
-                            <div class="gallery-placeholder">Screenshot 5<br>Analytics</div>
+                            <div class="gallery-placeholder">Analytics<br>Dashboard</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/mlhomes/screenshot6.jpg" data-caption="Performance Metrics">
-                            <div class="gallery-placeholder">Screenshot 6<br>Metrics</div>
+                            <div class="gallery-placeholder">Performance<br>Results</div>
                         </div>
                     </div>
                 </div>
@@ -1007,48 +1292,48 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <h4>Research Position</h4>
-                <p><strong>February 2024 - July 2024 | Computer Vision Research Intern</strong></p>
-                <p>Developed deep learning models for automated tree detection in satellite imagery using PyTorch and TensorFlow. Built production-ready computer vision solutions for environmental monitoring applications.</p>
+                <h4>Teaching Machines to Count Trees From Space</h4>
+                <p><strong>February 2024 - July 2024 | Research Internship</strong></p>
+                <p>Joined a research project that's using AI to track deforestation in real-time. The goal? Build computer vision models that can automatically detect and count trees in satellite imagery. It's like playing "Where's Waldo" but with forests, and the stakes are saving the planet.</p>
 
-                <h4>Technical Achievements</h4>
+                <h4>What I Actually Did</h4>
                 <ul>
-                    <li>Implemented state-of-the-art deep learning architectures for object detection</li>
-                    <li>Processed and analysed large-scale satellite imagery datasets</li>
-                    <li>Optimised model performance for real-world deployment</li>
-                    <li>Developed automated pipeline for data preprocessing and model training</li>
-                    <li>Created comprehensive documentation and research reports</li>
+                    <li>Built and trained deep learning models using PyTorch and TensorFlow</li>
+                    <li>Processed thousands of satellite images to teach AI what trees look like from space</li>
+                    <li>Optimised models to run fast enough for real-world use (turns out speed matters when you're monitoring entire forests)</li>
+                    <li>Created automated pipelines that can process new satellite data without human intervention</li>
+                    <li>Wrote documentation that other researchers can actually understand and use</li>
                 </ul>
 
-                <h4>Technologies Used</h4>
-                <p>PyTorch and TensorFlow for deep learning model development, Python for data processing, OpenCV for computer vision tasks, and various satellite imagery processing tools for environmental monitoring applications.</p>
+                <h4>The Cool Technical Stuff</h4>
+                <p>We used state-of-the-art object detection architectures, fine-tuned them on custom datasets, and got them running efficiently enough to process real satellite feeds. The tricky part wasn't just detecting trees - it was distinguishing individual tree canopies from each other in dense forests.</p>
 
-                <h4>Research Impact</h4>
-                <p>The developed models contribute to environmental monitoring efforts, enabling automated detection and analysis of forest coverage changes over time. This research supports conservation efforts and environmental policy decision-making.</p>
+                <h4>Why This Matters</h4>
+                <p>Traditional forest monitoring takes months and requires teams of people manually analysing images. Our AI can do the same analysis in hours and catch deforestation as it happens, not months later. It's environmental protection with a tech upgrade.</p>
 
-                <h4>Skills Developed</h4>
-                <p>Advanced machine learning techniques, computer vision algorithms, satellite imagery analysis, and experience with production-ready AI system development in an environmental research context.</p>
+                <h4>What I Learned</h4>
+                <p>Working on research taught me that building AI for real-world problems is completely different from following online tutorials. You spend most of your time on data quality, edge cases, and making sure your model actually works when it matters.</p>
 
                 <div class="project-gallery">
                     <h4>Research Gallery</h4>
                     <div class="gallery-grid">
                         <div class="gallery-item" data-image="images/gallery/caeli/model1.jpg" data-caption="Deep Learning Architecture">
-                            <div class="gallery-placeholder">Model 1<br>Architecture</div>
+                            <div class="gallery-placeholder">Model<br>Architecture</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/caeli/satellite1.jpg" data-caption="Satellite Imagery Input">
-                            <div class="gallery-placeholder">Satellite 1<br>Input Data</div>
+                            <div class="gallery-placeholder">Satellite<br>Imagery</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/caeli/detection1.jpg" data-caption="Tree Detection Results">
-                            <div class="gallery-placeholder">Detection 1<br>Results</div>
+                            <div class="gallery-placeholder">Detection<br>Results</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/caeli/pipeline.jpg" data-caption="Processing Pipeline">
-                            <div class="gallery-placeholder">Pipeline<br>Overview</div>
+                            <div class="gallery-placeholder">Processing<br>Pipeline</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/caeli/metrics.jpg" data-caption="Model Performance">
                             <div class="gallery-placeholder">Performance<br>Metrics</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/caeli/deployment.jpg" data-caption="Production Deployment">
-                            <div class="gallery-placeholder">Deployment<br>Setup</div>
+                            <div class="gallery-placeholder">Production<br>System</div>
                         </div>
                     </div>
                 </div>
@@ -1059,52 +1344,52 @@
     <div class="modal" id="binqyModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Binqy Mobile App Development</h2>
+                <h2 class="modal-title">Binqy Mobile App</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <h4>Project Details</h4>
-                <p><strong>September 2023 - December 2023 | Mobile App Developer</strong></p>
-                <p>Developed a React Native mobile application for Dutch startup Binqy as part of a university exchange programme. Collaborated with a small development team to build a production-ready app currently serving an active user base.</p>
+                <h4>My Amsterdam Adventure</h4>
+                <p><strong>September 2023 - December 2023 | Exchange Project</strong></p>
+                <p>During my Erasmus semester in Amsterdam, I joined a small Dutch startup called Binqy to build their mobile app. It was my first time working in a real startup environment, and definitely my first time debugging React Native code while trying to avoid cyclists.</p>
 
-                <h4>Development Highlights</h4>
+                <h4>What We Built</h4>
                 <ul>
-                    <li>Built cross-platform mobile application using React Native</li>
-                    <li>Collaborated in an international, multicultural development team</li>
-                    <li>Implemented user-friendly interface design principles</li>
-                    <li>Integrated real-time features and backend connectivity</li>
-                    <li>Delivered production-ready application with active users</li>
+                    <li>Cross-platform mobile app using React Native (one codebase, two platforms)</li>
+                    <li>Real-time features that kept users engaged without draining their batteries</li>
+                    <li>Clean, intuitive interface that worked for both tech-savvy and casual users</li>
+                    <li>Backend integration that actually stayed connected when users switched between WiFi and mobile data</li>
+                    <li>The whole thing from concept to app store submission</li>
                 </ul>
 
-                <h4>Technical Stack</h4>
-                <p>React Native for cross-platform development, JavaScript/TypeScript for application logic, integration with backend APIs, and implementation of modern mobile development practices and patterns.</p>
+                <h4>The International Team Experience</h4>
+                <p>Working with developers from different countries taught me that good code translates across cultures, but communication styles definitely don't. I learned to over-document everything, ask questions early, and never assume everyone is on the same page just because they said "yes" in the meeting.</p>
 
-                <h4>International Experience</h4>
-                <p>This project was completed during my Erasmus exchange programme in the Netherlands, providing valuable experience working in an international startup environment and collaborating with diverse, multicultural teams.</p>
+                <h4>Real-World Lessons</h4>
+                <p>University projects have clear requirements and deadlines. Startup projects have neither. Requirements change weekly, deadlines are "as soon as possible," and sometimes you discover the feature you just spent two weeks building isn't actually what users want. It's chaotic but incredibly educational.</p>
 
-                <h4>Project Outcome</h4>
-                <p>Successfully delivered a functional mobile application that is currently in production and serving real users. The project demonstrated ability to work effectively in startup environments and deliver quality software solutions under tight deadlines.</p>
+                <h4>The Result</h4>
+                <p>We shipped a working app that real people downloaded and used. Seeing actual user reviews (even the negative ones) was both terrifying and exciting. Nothing teaches you to write better code like knowing strangers are depending on it to work.</p>
 
                 <div class="project-gallery">
-                    <h4>App Gallery</h4>
+                    <h4>App Development Gallery</h4>
                     <div class="gallery-grid">
                         <div class="gallery-item" data-image="images/gallery/binqy/ui1.jpg" data-caption="Main Interface">
-                            <div class="gallery-placeholder">UI 1<br>Main Screen</div>
+                            <div class="gallery-placeholder">Main<br>Interface</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/binqy/ui2.jpg" data-caption="User Dashboard">
-                            <div class="gallery-placeholder">UI 2<br>Dashboard</div>
+                            <div class="gallery-placeholder">User<br>Dashboard</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/binqy/features.jpg" data-caption="Key Features">
-                            <div class="gallery-placeholder">Features<br>Overview</div>
+                            <div class="gallery-placeholder">Key<br>Features</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/binqy/mockup.jpg" data-caption="App Mockup">
-                            <div class="gallery-placeholder">Mockup<br>Design</div>
+                            <div class="gallery-placeholder">Design<br>Mockups</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/binqy/team.jpg" data-caption="Development Team">
-                            <div class="gallery-placeholder">Team<br>Collaboration</div>
+                            <div class="gallery-placeholder">Team<br>Photo</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/binqy/launch.jpg" data-caption="App Launch">
-                            <div class="gallery-placeholder">Launch<br>Event</div>
+                            <div class="gallery-placeholder">Launch<br>Day</div>
                         </div>
                     </div>
                 </div>
@@ -1115,41 +1400,44 @@
     <div class="modal" id="project5Modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">University Data Visualisation Project</h2>
+                <h2 class="modal-title">Data Visualisation Project</h2>
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <h4>Academic Project Overview</h4>
-                <p>Interactive platform for complex environmental data exploration developed as part of advanced web development coursework. Featured custom visualisation components and demonstrated proficiency in modern frontend technologies.</p>
+                <h4>Making Data Less Boring</h4>
+                <p>Academic project that turned me into a data visualisation convert. The assignment was simple: take complex environmental data and make it understandable. The execution was anything but simple.</p>
 
-                <h4>Key Features</h4>
+                <h4>The Challenge</h4>
                 <ul>
-                    <li>Custom interactive visualisation components</li>
-                    <li>Advanced data filtering and querying capabilities</li>
-                    <li>Responsive design for multiple device types</li>
-                    <li>Real-time data updates and user interactions</li>
+                    <li>Raw environmental data that looked like spreadsheet soup</li>
+                    <li>Multiple data sources with different formats and update schedules</li>
+                    <li>Users who needed insights, not just pretty charts</li>
+                    <li>Everything had to work on mobile because that's how people browse data now</li>
                 </ul>
 
-                <h4>Technical Implementation</h4>
-                <p>Built with HTML/CSS/JS for the frontend, D3.js for custom data visualisations, connecting to various API's for regular data updates</p>
+                <h4>My Solution</h4>
+                <p>Built an interactive web platform using D3.js for custom visualisations and vanilla JavaScript for the logic. Created filtering systems that let users explore the data instead of just staring at static charts. Added real-time updates so the information stayed current.</p>
 
-                <h4>Academic Learning</h4>
-                <p>This project demonstrated advanced web development skills, data visualisation techniques, and modern JavaScript frameworks. Received high marks for technical implementation and user experience design.</p>
+                <h4>The D3.js Learning Curve</h4>
+                <p>D3.js is powerful but has the steepest learning curve I've ever encountered. I probably spent more time reading documentation than writing code. But once it clicked, I could create exactly the visualisations I wanted instead of settling for whatever the charting library offered.</p>
+
+                <h4>What I Learned</h4>
+                <p>Data visualisation isn't just about making things pretty - it's about telling stories with data. The best charts aren't the most complex ones; they're the ones that help users understand something they couldn't see before.</p>
 
                 <div class="project-gallery">
-                    <h4>Project Gallery</h4>
+                    <h4>Project Screenshots</h4>
                     <div class="gallery-grid">
                         <div class="gallery-item" data-image="images/gallery/dataviz/dashboard.jpg" data-caption="Main Dashboard">
-                            <div class="gallery-placeholder">Dashboard<br>Overview</div>
+                            <div class="gallery-placeholder">Main<br>Dashboard</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/dataviz/charts.jpg" data-caption="Interactive Charts">
-                            <div class="gallery-placeholder">Charts<br>Interface</div>
+                            <div class="gallery-placeholder">Interactive<br>Charts</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/dataviz/filters.jpg" data-caption="Data Filtering">
                             <div class="gallery-placeholder">Filtering<br>System</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/dataviz/responsive.jpg" data-caption="Responsive Design">
-                            <div class="gallery-placeholder">Responsive<br>Layout</div>
+                            <div class="gallery-placeholder">Mobile<br>View</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/dataviz/code.jpg" data-caption="Code Structure">
                             <div class="gallery-placeholder">Code<br>Architecture</div>
@@ -1170,108 +1458,58 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
-                <h4>Comparative Analysis of Instance Segmentation Models</h4>
+                <h4>AI Tree Detection Showdown</h4>
                 <p>
-                    This thesis presents a comprehensive comparative analysis of three state-of-the-art deep learning models for instance segmentation, specifically targeting tree canopy detection in high-resolution aerial imagery. The research evaluates the performance, scalability, and practical deployment potential of each model within real-world environmental monitoring workflows.
+                    My final thesis project: comparing three different AI models to see which one is best at detecting individual trees in aerial photographs. Think of it as a heavyweight championship, but for computer vision algorithms that specialise in forest analysis.
                 </p>
 
-                <h4>Research Methodology</h4>
+                <h4>The Research Question</h4>
                 <ul>
-                    <li>Developed a custom, high-quality dataset of annotated tree instances from diverse aerial imagery sources.</li>
-                    <li>Implemented and trained three leading instance segmentation architectures using PyTorch and TensorFlow, including Mask R-CNN, YOLACT, and YOLO-based segmentation.</li>
-                    <li>Conducted rigorous quantitative and qualitative evaluation using metrics such as mAP, IoU, and inference speed.</li>
-                    <li>Benchmarked model performance across varying dataset sizes and image resolutions to assess scalability and robustness.</li>
+                    <li>Built a custom dataset of annotated tree images from various aerial sources (turns out manually marking thousands of trees is as tedious as it sounds)</li>
+                    <li>Implemented three competing approaches: Mask R-CNN, YOLACT, and a custom YOLO-based solution</li>
+                    <li>Tested each model on speed, accuracy, and how well they handle edge cases like overlapping tree canopies</li>
+                    <li>Benchmarked performance across different image qualities and forest types</li>
                 </ul>
 
-                <h4>Practical Deployment & GIS Integration</h4>
+                <h4>Making It Practical</h4>
                 <ul>
-                    <li>Integrated the top-performing model with QGIS, enabling seamless geospatial analysis and visualisation of segmentation results for end-users in forestry and environmental management.</li>
-                    <li>Developed automated pipelines for data preprocessing, model inference, and georeferenced output generation.</li>
+                    <li>Integrated the best-performing model with QGIS so forestry professionals could actually use it</li>
+                    <li>Created automated pipelines that process raw aerial imagery and output georeferenced tree maps</li>
+                    <li>Built it to work with real-world data, not just clean academic datasets</li>
                 </ul>
 
-                <h4>Key Findings</h4>
+                <h4>What I Discovered</h4>
                 <ul>
-                    <li>Identified significant trade-offs between model accuracy, computational efficiency, and ease of deployment.</li>
-                    <li>Demonstrated that custom dataset quality and annotation consistency are critical for high-precision segmentation in complex natural environments.</li>
-                    <li>Showed that open-source deep learning frameworks (PyTorch, TensorFlow) enable rapid experimentation and reproducibility in applied remote sensing research.</li>
+                    <li>The "best" model depends entirely on what you're optimising for - speed vs accuracy vs computational resources</li>
+                    <li>Data quality matters more than model complexity (garbage in, garbage out, even with fancy AI)</li>
+                    <li>Academic papers often skip the messy parts of making AI work in production environments</li>
                 </ul>
 
-                <h4>Academic Contribution</h4>
+                <h4>The Real Contribution</h4>
                 <p>
-                    This work advances the application of deep learning for environmental monitoring by providing a reproducible benchmark and practical deployment workflow for tree canopy instance segmentation. The integration with QGIS demonstrates real-world utility for researchers and practitioners in geospatial analysis.
+                    Beyond comparing models, I created a reproducible workflow that other researchers can use and improve upon. The QGIS integration means forestry professionals can use this technology without needing a computer science degree.
                 </p>
 
                 <div class="project-gallery">
-                    <h4>Project Gallery</h4>
+                    <h4>Thesis Project Gallery</h4>
                     <div class="gallery-grid">
                         <div class="gallery-item" data-image="images/gallery/chatbot/interface.jpg" data-caption="Sample Segmentation Output">
-                            <div class="gallery-placeholder">Segmentation<br>Output</div>
+                            <div class="gallery-placeholder">Segmentation<br>Results</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/chatbot/nlp.jpg" data-caption="Custom Dataset Annotation">
-                            <div class="gallery-placeholder">Dataset<br>Annotation</div>
+                            <div class="gallery-placeholder">Dataset<br>Creation</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/chatbot/conversation.jpg" data-caption="Model Comparison Metrics">
-                            <div class="gallery-placeholder">Model<br>Metrics</div>
+                            <div class="gallery-placeholder">Performance<br>Comparison</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/chatbot/architecture.jpg" data-caption="QGIS Integration">
                             <div class="gallery-placeholder">QGIS<br>Integration</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/chatbot/testing.jpg" data-caption="Evaluation Pipeline">
-                            <div class="gallery-placeholder">Evaluation<br>Pipeline</div>
+                            <div class="gallery-placeholder">Testing<br>Pipeline</div>
                         </div>
                         <div class="gallery-item" data-image="images/gallery/chatbot/demo.jpg" data-caption="Deployment Workflow">
-                            <div class="gallery-placeholder">Deployment<br>Workflow</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="project6Modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Capstone Web Application</h2>
-                <button class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h4>Capstone Project</h4>
-                <p>Comprehensive full-stack web application developed as a capstone project, demonstrating mastery of modern development practices, software engineering principles, and technical skills acquired throughout the degree programme.</p>
-
-                <h4>Application Features</h4>
-                <ul>
-                    <li>Complete user authentication and authorisation system</li>
-                    <li>Advanced data visualisation and analytics</li>
-                    <li>Responsive design with modern UI components</li>
-                    <li>RESTful API design and implementation</li>
-                </ul>
-
-                <h4>Technical Stack</h4>
-                <p>Angular for the frontend framework, Material UI for design components and consistent styling, Chart.js for comprehensive data visualisation, and GraphQL for efficient data querying and management.</p>
-
-                <h4>Project Significance</h4>
-                <p>This capstone project demonstrated the culmination of academic learning, showcasing ability to design, develop, and deploy a complete web application using industry-standard technologies and best practices.</p>
-
-                <div class="project-gallery">
-                    <h4>Project Gallery</h4>
-                    <div class="gallery-grid">
-                        <div class="gallery-item" data-image="images/gallery/capstone/login.jpg" data-caption="Authentication System">
-                            <div class="gallery-placeholder">Login<br>System</div>
-                        </div>
-                        <div class="gallery-item" data-image="images/gallery/capstone/dashboard.jpg" data-caption="Main Dashboard">
-                            <div class="gallery-placeholder">Dashboard<br>View</div>
-                        </div>
-                        <div class="gallery-item" data-image="images/gallery/capstone/analytics.jpg" data-caption="Data Analytics">
-                            <div class="gallery-placeholder">Analytics<br>Section</div>
-                        </div>
-                        <div class="gallery-item" data-image="images/gallery/capstone/api.jpg" data-caption="API Documentation">
-                            <div class="gallery-placeholder">API<br>Docs</div>
-                        </div>
-                        <div class="gallery-item" data-image="images/gallery/capstone/mobile.jpg" data-caption="Mobile Interface">
-                            <div class="gallery-placeholder">Mobile<br>View</div>
-                        </div>
-                        <div class="gallery-item" data-image="images/gallery/capstone/deployment.jpg" data-caption="Deployment Process">
-                            <div class="gallery-placeholder">Deployment<br>Setup</div>
+                            <div class="gallery-placeholder">Final<br>System</div>
                         </div>
                     </div>
                 </div>
@@ -1338,6 +1576,20 @@
                 const modal = btn.closest('.modal');
                 modal.classList.remove('active');
                 document.body.style.overflow = 'auto';
+                
+                // Reset contact form when closing contact modal
+                if (modal.id === 'contactModal') {
+                    // Unlock scrolling and make modal scrollable again
+                    document.body.classList.remove('scroll-locked');
+                    const modalContent = modal.querySelector('.modal-content');
+                    modalContent.classList.remove('form-submitted');
+                    
+                    setTimeout(() => {
+                        if (window.resetContactForm) {
+                            window.resetContactForm();
+                        }
+                    }, 300);
+                }
             });
         });
 
@@ -1347,6 +1599,20 @@
                 if (e.target === modal) {
                     modal.classList.remove('active');
                     document.body.style.overflow = 'auto';
+                    
+                    // Reset contact form when closing contact modal
+                    if (modal.id === 'contactModal') {
+                        // Unlock scrolling and make modal scrollable again
+                        document.body.classList.remove('scroll-locked');
+                        const modalContent = modal.querySelector('.modal-content');
+                        modalContent.classList.remove('form-submitted');
+                        
+                        setTimeout(() => {
+                            if (window.resetContactForm) {
+                                window.resetContactForm();
+                            }
+                        }, 300);
+                    }
                 }
             });
         });
@@ -1355,41 +1621,265 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 modals.forEach(modal => {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = 'auto';
+                    if (modal.classList.contains('active')) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                        
+                        // Reset contact form when closing contact modal
+                        if (modal.id === 'contactModal') {
+                            // Unlock scrolling and make modal scrollable again
+                            document.body.classList.remove('scroll-locked');
+                            const modalContent = modal.querySelector('.modal-content');
+                            modalContent.classList.remove('form-submitted');
+                            
+                            setTimeout(() => {
+                                if (window.resetContactForm) {
+                                    window.resetContactForm();
+                                }
+                            }, 300);
+                        }
+                    }
                 });
             }
         });
+
+        // Enhanced Contact Form Functionality
+        function initializeContactForm() {
+            const form = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const formContainer = document.getElementById('formContainer');
+            const successContainer = document.getElementById('successContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const errorMessageText = document.getElementById('errorMessageText');
+            const modal = document.getElementById('contactModal');
+            const modalContent = modal.querySelector('.modal-content');
+
+            if (!form) return; // Exit if form doesn't exist
+
+            // Form validation
+            function validateField(field) {
+                const value = field.value.trim();
+                const fieldGroup = field.closest('.form-group');
+                const errorMessage = fieldGroup.querySelector('.error-message');
+                
+                let isValid = true;
+                let message = '';
+
+                switch(field.type) {
+                    case 'email':
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!value) {
+                            message = 'I\'ll need your email to get back to you';
+                            isValid = false;
+                        } else if (!emailRegex.test(value)) {
+                            message = 'That doesn\'t look like a valid email address';
+                            isValid = false;
+                        }
+                        break;
+                    default:
+                        if (!value) {
+                            message = field.name === 'name' ? 'What should I call you?' : 
+                                     field.name === 'subject' ? 'Give me a hint about your project' :
+                                     'I\'d love to hear about your project';
+                            isValid = false;
+                        } else if (value.length < 2) {
+                            message = 'That seems a bit short - can you add a bit more?';
+                            isValid = false;
+                        }
+                }
+
+                if (isValid) {
+                    fieldGroup.classList.remove('error');
+                    errorMessage.classList.remove('show');
+                } else {
+                    fieldGroup.classList.add('error');
+                    errorMessage.textContent = message;
+                    errorMessage.classList.add('show');
+                }
+
+                return isValid;
+            }
+
+            // Real-time validation
+            const formFields = form.querySelectorAll('input, textarea');
+            formFields.forEach(field => {
+                field.addEventListener('blur', () => validateField(field));
+                field.addEventListener('input', () => {
+                    if (field.closest('.form-group').classList.contains('error')) {
+                        validateField(field);
+                    }
+                });
+            });
+
+            // Form submission
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // Validate all fields
+                let isFormValid = true;
+                formFields.forEach(field => {
+                    if (!validateField(field)) {
+                        isFormValid = false;
+                    }
+                });
+
+                if (!isFormValid) {
+                    return;
+                }
+
+                // Show loading state
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+
+                try {
+                    // Submit to Formspree
+                    const formData = new FormData(form);
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        showSuccess();
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Failed to send message');
+                    }
+                } catch (error) {
+                    console.error('Form submission error:', error);
+                    showError(error.message);
+                } finally {
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                }
+            });
+
+            function showSuccess() {
+                // Create confetti
+                createConfetti();
+                
+                // Lock scrolling and make modal non-scrollable
+                document.body.classList.add('scroll-locked');
+                modalContent.classList.add('form-submitted');
+                
+                // Hide form and show success
+                formContainer.classList.add('hidden');
+                
+                setTimeout(() => {
+                    successContainer.classList.add('show');
+                    // Smooth scroll to top of modal content
+                    modalContent.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }, 300);
+            }
+
+            function showError(message = 'Looks like there was a hiccup sending your message. Mind trying again?') {
+                errorMessageText.textContent = message;
+                
+                // Lock scrolling and make modal non-scrollable
+                document.body.classList.add('scroll-locked');
+                modalContent.classList.add('form-submitted');
+                
+                formContainer.classList.add('hidden');
+                setTimeout(() => {
+                    errorContainer.classList.add('show');
+                    // Smooth scroll to top of modal content
+                    modalContent.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }, 300);
+            }
+
+            // Make functions globally accessible
+            window.resetContactForm = function() {
+                // Unlock scrolling and make modal scrollable again
+                document.body.classList.remove('scroll-locked');
+                modalContent.classList.remove('form-submitted');
+                
+                // Hide success/error containers
+                successContainer.classList.remove('show');
+                errorContainer.classList.remove('show');
+                
+                // Clear form validation states
+                const formGroups = form.querySelectorAll('.form-group');
+                formGroups.forEach(group => {
+                    group.classList.remove('error');
+                    const errorMessage = group.querySelector('.error-message');
+                    errorMessage.classList.remove('show');
+                });
+
+                // Reset form
+                form.reset();
+                
+                // Show form again
+                setTimeout(() => {
+                    formContainer.classList.remove('hidden');
+                }, 300);
+            };
+
+            window.closeContactModal = function() {
+                // Unlock scrolling and make modal scrollable again
+                document.body.classList.remove('scroll-locked');
+                modalContent.classList.remove('form-submitted');
+                
+                const modal = document.getElementById('contactModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+                
+                // Reset form when closing
+                setTimeout(() => {
+                    if (window.resetContactForm) {
+                        window.resetContactForm();
+                    }
+                }, 300);
+            };
+        }
+
+        function createConfetti() {
+            const colors = ['#22c55e', '#15803d', '#10b981', '#34d399', '#6ee7b7'];
+            const confettiCount = 50;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    
+                    // Random shapes
+                    if (Math.random() > 0.5) {
+                        confetti.style.borderRadius = '50%';
+                    }
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }, i * 50);
+            }
+        }
 
         // Contact modal
         function openContactModal() {
             const modal = document.getElementById('contactModal');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Initialize form functionality if not already done
+            setTimeout(() => {
+                initializeContactForm();
+            }, 100);
         }
-
-        // // Contact form submission
-        // document.getElementById('contactForm').addEventListener('submit', function(e) {
-        //     e.preventDefault();
-            
-        //     // Get form data
-        //     const formData = new FormData(this);
-        //     const name = formData.get('name');
-        //     const email = formData.get('email');
-        //     const subject = formData.get('subject');
-        //     const message = formData.get('message');
-            
-        //     // Here you would typically send the data to your backend
-        //     console.log('Form submitted:', { name, email, subject, message });
-            
-        //     // Show success message (you can customise this)
-        //     alert('Thank you for your message! I\'ll get back to you soon.');
-            
-        //     // Close modal and reset form
-        //     document.getElementById('contactModal').classList.remove('active');
-        //     document.body.style.overflow = 'auto';
-        //     this.reset();
-        // });
 
         // Gallery lightbox functionality
         const lightbox = document.getElementById('imageLightbox');
@@ -1545,8 +2035,14 @@
                 }
             });
         }
+        
         enableCard3DEffect();
         window.addEventListener('resize', enableCard3DEffect);
+
+        // Initialize contact form when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeContactForm();
+        });
     </script>
 </body>
 </html>
